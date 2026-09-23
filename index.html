@@ -2,20 +2,34 @@
 <html>
 
 <head>
-<title>CPSC 581 - L1 - G5</title>
-<link rel="icon" type="image/x-icon", href="Sprites/penguin_title_icon.png", id="title-icon">
+    <title>CPSC 581 - L1 - G5</title>
+    <link rel="icon" type="image/x-icon" href="Sprites/penguin_title_icon.png" id="title-icon" />
+    <link rel="stylesheet" href="index.css" />
+
+    <!-- Include all of the (Function and Class Definitions ONLY) script modules here. -->
+    <script src="Scripts/base.js" defer></script>
+    <script src="Scripts/title_icon_randomiser.js" defer></script>
+    <script src="Scripts/whackbox_resizer.js" defer></script>
+
+    <!-- Include all of the method-calling scripts here. -->
+    <script src="Scripts/main.js" defer></script>
 </head>
 
 <body>
-<button id="toggle-run-button"></button>
-<button id="randomise-title-icon-button">Randomise Title Icon</button>
+    <div id="whackbox-bound">
+        <div id="whackbox">
+            <div id="whackbox-h-layout">
+                <!-- Buttons and elements for horizontal view here. -->
+                <!-- Placeholder image. -->
+                <img src="Sprites/h_whackbox.png" width="960" height="640" />
+            </div>
+            <div id="whackbox-v-layout">
+                <!-- Buttons and elements for vertical view here. -->
+                <!-- Placeholder image. -->
+                <img src="Sprites/v_whackbox.png" width="640" height="960" />
+            </div>
+        </div>
+    </div>
 </body>
-
-<!-- Include all of the (Function and Class Definitions ONLY) script modules here. -->
-<script src="Scripts/base.js"></script>
-
-<!-- Include all of the method-calling scripts here. -->
-<script src="Scripts/title_icon_randomiser.js"></script>
-<script src="Scripts/main.js"></script>
 
 </html>

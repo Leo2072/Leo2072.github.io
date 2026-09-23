@@ -1,0 +1,39 @@
+/*
+    Define custom properties to be inherited - like a theme of sort.
+*/
+
+
+*
+{
+    font-family: Consolas, Courier New, monospace;
+}
+
+
+.pixelart
+{
+    image-rendering: pixelated;
+}
+
+
+body
+{
+    /*
+        The method for automatically resizing the whackbox with code requires the parent of the whackbox to have a margin of 0.
+    */
+    margin: 0px;
+    
+    /*
+        Placeholder background.
+    */
+    background-color: #d3afd4;
+    background-image: url("Sprites/raccoon_title_icon.png");
+}
+
+
+#whackbox
+{
+    /*
+        Placeholder whackbox-background.
+    */
+    background-color: #b2e1c0;
+}
