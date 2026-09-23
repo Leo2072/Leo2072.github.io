@@ -45,8 +45,8 @@ function updateSize()
     var window_w, window_h;
     if (isMobile)
     {
-        window_w = window.innerWidth / visualViewport.scale;
-        window_h = window.innerHeight / visualViewport.scale;
+        window_w = window.innerWidth;
+        window_h = window.innerHeight;
     }
     else
     {
