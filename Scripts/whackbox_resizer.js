@@ -38,10 +38,21 @@ var whackbox_h_layout = document.getElementById("whackbox-h-layout");
 var whackbox_v_layout = document.getElementById("whackbox-v-layout");
 
 
+var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
 function updateSize()
 {
-    var window_w = window.innerWidth;
-    var window_h = window.innerHeight;
+    var window_w, window_h;
+    if (isMobile)
+    {
+        window_w = window.outerWidth;
+        window_w = window.outerHeight;
+    }
+    else
+    {
+        window_w = window.innerWidth;
+        window_h = window.innerHeight;
+    }
 
     // Calculate the preferred margin for the bound of the whackbox.
     var margin_l = window_w * WHACKBOX_RELATIVE_MARGIN.l;
