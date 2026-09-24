@@ -34,7 +34,7 @@ class ProcessTreeNode
             parent.addChild(this);
         }
 
-        for (var child in children)
+        for (var child of children) // "for x of xs" to iterate over objects instead of addresses 
         {
             this.addChild(child);
         }
@@ -158,7 +158,7 @@ function tickPerFrameProcess()
 {
     var perFrameProcessCurrentFrameTime = Date.now();
     var delta;
-    
+
     if (perFrameProcessLastFrameTime < perFrameProcessCurrentFrameTime)
     {
         // Get elapsed time in milliseconds, then convert it to seconds.
@@ -174,7 +174,7 @@ function tickPerFrameProcess()
     processTreeRoot.tick(delta);
 
     // Clean up deleted nodes.
-    for (var deletedNode in processNodeDeletionQueue)
+    for (var deletedNode of processNodeDeletionQueue) // "for x of xs" to iterate over objects instead of addresses 
     {
         var deletedNodeParent = deletedNode.parent;
         if (deletedNodeParent != null && !deletedNodeParent.isQueuedForDeletion)
