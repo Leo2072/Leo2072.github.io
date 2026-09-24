@@ -4,8 +4,8 @@ var H_WHACKBOX_INFO =
     defaultHeight: 640,
     minScale: 0.1,
     maxScale: 1,
+    aspect: 960 / 640
 };
-H_WHACKBOX_INFO.aspect = H_WHACKBOX_INFO.defaultWidth / H_WHACKBOX_INFO.defaultHeight;
 
 var V_WHACKBOX_INFO =
 {
@@ -13,8 +13,8 @@ var V_WHACKBOX_INFO =
     defaultHeight: 960,
     minScale: 0.1,
     maxScale: 1,
+    aspect:  640 / 960
 };
-V_WHACKBOX_INFO.aspect = V_WHACKBOX_INFO.defaultWidth / V_WHACKBOX_INFO.defaultHeight;
 
 var WHACKBOX_RELATIVE_MARGIN =
 {
@@ -64,7 +64,7 @@ function updateSize()
     var available_h = window_h - margin_t - margin_b;
     var available_aspect = available_w / available_h;
 
-    var scale;
+    var scale, w, h;
     if (available_aspect >= 1)
     {
         // If we set the width of the whackbox to the width of the available space,
@@ -109,7 +109,7 @@ function updateSize()
         if (available_aspect < V_WHACKBOX_INFO.aspect)
         {
             scale = clamp(
-                available_w / V_WHACKBOX_INFO.defaulWidth,
+                available_w / V_WHACKBOX_INFO.defaultWidth,
                 V_WHACKBOX_INFO.minScale,
                 V_WHACKBOX_INFO.maxScale
             );
