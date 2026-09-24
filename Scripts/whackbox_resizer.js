@@ -38,12 +38,13 @@ var whackbox_h_layout = document.getElementById("whackbox-h-layout");
 var whackbox_v_layout = document.getElementById("whackbox-v-layout");
 
 
-var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+var is_mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+var is_horizontal = true;
 
 function updateSize()
 {
     var window_w, window_h;
-    if (isMobile)
+    if (is_mobile)
     {
         window_w = window.innerWidth;
         window_h = window.innerHeight;
@@ -67,6 +68,9 @@ function updateSize()
     var scale, w, h;
     if (available_aspect >= 1)
     {
+        // Set global is_horizontal true for hole/mole positioning.
+        is_horizontal = true;
+
         // If we set the width of the whackbox to the width of the available space,
         // the height of the whackbox would exceed that of the space.
         // Thus, the scale should be calculated based on the height of the available space.
@@ -103,6 +107,9 @@ function updateSize()
     }
     else
     {
+        // Set global is_horizontal false for hole/mole positioning.
+        is_horizontal = false;
+
         // If we set the height of the whackbox to the height of the available space,
         // the width of the whackbox would exceed that of the space.
         // Thus, the scale should be calculated based on the width of the available space.
