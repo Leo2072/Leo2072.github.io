@@ -179,7 +179,7 @@ function tickPerFrameProcess()
         var deletedNodeParent = deletedNode.parent;
         if (deletedNodeParent != null && !deletedNodeParent.isQueuedForDeletion)
         {
-            deletedNodeParent.removeChild(this, false);
+            deletedNodeParent.removeChild(deletedNode, false);
         }
         deletedNode.clearChildren(false);
     }
