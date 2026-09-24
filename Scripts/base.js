@@ -136,7 +136,7 @@ class ProcessTreeNode
     queue_delete()
     {
         this.isQueuedForDeletion = true;
-        processNodedeleteionQueue.push(this);
+        processNodeDeletionQueue.push(this);
         // Use a copy of the array of children instead of the actual array in case some children automatically remove themselves.
         var currentChildren = this.children.slice();
 
@@ -157,6 +157,8 @@ var perFrameProcessLastFrameTime = 0.0;
 function tickPerFrameProcess()
 {
     var perFrameProcessCurrentFrameTime = Date.now();
+    var delta;
+    
     if (perFrameProcessLastFrameTime < perFrameProcessCurrentFrameTime)
     {
         // Get elapsed time in milliseconds, then convert it to seconds.
