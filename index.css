@@ -15,23 +15,6 @@
 }
 
 
-body
-{
-    margin: 0px;
-
-    /* Prevent auto-scrolling */
-    overscroll-behavior-y: none;
-    
-    /*
-        Placeholder background.
-    */
-    background-color: #d3afd4;
-    background-image: url("Sprites/penguin_title_icon.png"); /* mwehehe */
-}
-
-
-
-
 
 /*
     Config variables for aspect ratios of holes, whackbox, min width, and max sizes.
@@ -73,7 +56,28 @@ body
         
         /* Become fully transparent at the edge of the element. */
         --game-background: radial-gradient(ellipse farthest-side at center top, rgba(255, 228, 91, 1) 90%, rgba(97, 97, 255, 0));
-        --background-to-game-bound-scale: 1.75;
+        
+        /*
+            Set the width of the background to the max width of the game area, times some additional factor.
+            --background-width: calc(var(--game-bound-max-width) * 2.5);
+
+            Set the height of the background to the max height of the game area, times some additional factor.
+            Additionally divide this by half since we are only using the bottom half of an ellipse for the background.
+            --background-height: calc(var(--background-width) / (var(--game-bound-aspect-ratio)) * 0.5);
+        */
+
+        /* Make the background square because this is a circular gradient. */
+        /*
+            To do this, apply the aspect ratio to the game-bound-max-width
+            if said aspect ratio is more than 1 (if height is greater than width).
+            This will set the result to game-bound-max-width if width is greater than height.
+        */
+        --background-width: calc(var(--game-bound-max-width) * 2.5 / (min(1, var(--game-bound-aspect-ratio))));
+        /*
+            Divide the width by half to get the height since the background only uses the bottom half of an ellipse.
+            (Aspect ratio of the background is 2:1)
+        */
+        --background-height: calc(var(--background-width) / 2);
     }
 
     @media (orientation: portrait), not (min-width: 800px)
@@ -90,8 +94,32 @@ body
         --game-content-padding: clamp(10px, 5%, 100px) clamp(10px, 5%, 100px) clamp(20px, 10%, 200px) 0px;
         
         /* Become fully transparent at the edge of the element. */
-        --game-background: radial-gradient(ellipse farthest-side at center top, rgba(255, 228, 91, 1) 90%, rgba(97, 97, 255, 0));
-        --background-to-game-bound-scale: 1.75;
+        --game-background: radial-gradient(ellipse farthest-side at left top, rgba(255, 228, 91, 1) 90%, rgba(97, 97, 255, 0));
+        
+        /*
+            Set the width of the background to the max width of the game area, times some additional factor.
+            Additionally divide this by half, since we are only use the bottom right quarter of an ellipse for the background.
+            --background-width: calc(var(--game-bound-max-width) * 4 * 0.5);
+
+            Set the height of the background to the max height of the game area, times some additional factor.
+            Additionally divide this by half, since we are only use the bottom right quarter of an ellipse for the background.
+            --background-height: calc(var(--background-width) / (var(--game-bound-aspect-ratio)) * 0.5);
+        */
+
+        /* Make the background square because this is a circular gradient. */
+        /*
+            To do this, apply the aspect ratio to the game-bound-max-width
+            if said aspect ratio is more than 1 (if height is greater than width).
+            This will set the result to game-bound-max-width if width is greater than height.
+            Additionally divide this by half, since we are only use the bottom right quarter of an ellipse for the background.
+        */
+        --background-width: calc(var(--game-bound-max-width) * 4 * 0.5 / min(1, var(--game-bound-aspect-ratio)));
+        /*
+            No need to divide the width by half to get the height
+            since the background only uses the bottom left quarter of an ellipse.
+            (Aspect ratio of the background is 1:1)
+        */
+        --background-height: calc(var(--background-width));
     }
 }
 
@@ -151,6 +179,9 @@ body
         display: flex;
         box-sizing: border-box; 
 
+        /* Cheat method to center this div. */
+        margin: auto;
+
         width: 100%;
         max-width: var(--game-bound-max-width);
         aspect-ratio: var(--game-bound-aspect-ratio);
@@ -169,47 +200,7 @@ body
         /* Placeholder background. */
         background-color: rgba(255, 228, 91, 1);
     }
-
-    /*
-        The class of divs containing a game-box-bound div,
-        for the purpose of rendering a finite background (that differs from the page's background) for the game area.
-    */
-    .game-area
-    {
-        display: flex;
-        box-sizing: content-box;
-        flex-direction: column;
-        justify-content: start;
-        align-items: center;
-        
-        width: 100%;
-        /*
-            Set the aspect ratio so that the browser automatically calculates
-            the height of the background container based on the width of the game bounds.
-        */
-        aspect-ratio: var(--game-bound-aspect-ratio);
-        /* Make sure the height at least covers the entire height of the screen. */
-        min-height: 100vh;
-
-        /* Limit the width to game-bound-max-width * background-to-game-bound-scale. */
-        max-width: calc(var(--game-bound-max-width) * var(--background-to-game-bound-scale));
-        /* Limit the height to game-boundmax-height * background-to-game-bound-scale. */
-        max-height: calc(var(--game-bound-max-width) * var(--background-to-game-bound-scale) / (var(--game-bound-aspect-ratio)));
-
-        /* Cheat method to centre this div. */
-        margin: auto;
-
-        background-image: var(--game-background);
-        background-position: center top;
-        background-size: calc(var(--game-bound-max-width) * var(--background-to-game-bound-scale))
-                         calc(var(--game-bound-max-width) * var(--background-to-game-bound-scale) / (var(--game-bound-aspect-ratio)));
-        background-repeat: no-repeat;
-    }
 }
-
-
-
-
 
 
 
@@ -261,6 +252,8 @@ body
         display: flex;
         box-sizing: border-box;
         
+        /* No centering, since this div must align with the left border. */
+
         width: 100%;
         max-width: var(--game-bound-max-width);
         aspect-ratio: var(--game-bound-aspect-ratio);
@@ -279,39 +272,33 @@ body
         /* Placeholder background. */
         background-color: rgba(255, 228, 91, 1);
     }
+}
 
-    /*
-        The class of divs containing a game-box-bound div,
-        for the purpose of rendering a finite background (that differs from the page's background) for the game area.
-    */
-    .game-area
+
+
+
+body
+{
+    margin: 0px;
+    /* Prevent auto-scrolling */
+    overscroll-behavior-y: none;
+
+    /* Placeholder background. */
+    background-color: #d3afd4;
+    /* The leftmost background is rendered on top. */
+    background-image: var(--game-background), url("Sprites/penguin_title_icon.png"); /* mwehehe */
+    
+    background-repeat: no-repeat, repeat;
+
+    /* Position the background different depending on whether the game is in horizontal or vertical layout. */
+    @media (orientation: landscape) and (min-width: 800px)
     {
-        display: flex;
-        flex-direction: column;
-        justify-content: start;
-        align-items: center;
-
-        width: 100%;
-        /*
-            Set the aspect ratio so that the browser automatically calculates
-            the height of the background container based on the width of the game bounds.
-        */
-        aspect-ratio: var(--game-bound-aspect-ratio);
-        /* Make sure the height at least covers the entire height of the screen. */
-        min-height: 100vh;
-
-        /* Limit the width to game-bound-max-width * background-to-game-bound-scale. */
-        max-width: calc(var(--game-bound-max-width) * var(--background-to-game-bound-scale));
-        /* Limit the height to game-boundmax-height * background-to-game-bound-scale. */
-        max-height: calc(var(--game-bound-max-width) * var(--background-to-game-bound-scale) / (var(--game-bound-aspect-ratio)));
-
-        /* Cheat method to centre this div. */
-        margin: auto;
-
-        background-image: var(--game-background);
-        background-position: center top;
-        background-size: calc(var(--game-bound-max-width) * var(--background-to-game-bound-scale))
-                         calc(var(--game-bound-max-width) * var(--background-to-game-bound-scale) / (var(--game-bound-aspect-ratio)));
-        background-repeat: no-repeat;
+        background-position: center top, center top;
     }
+    @media (orientation: portrait), not (min-width: 800px)
+    {
+        background-position: left top, left top;
+    }
+
+    background-size: var(--background-width) var(--background-height), auto auto;
 }
