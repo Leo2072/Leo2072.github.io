@@ -7,30 +7,17 @@
     <link rel="stylesheet" href="index.css" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Include all of the (Function and Class Definitions ONLY) script modules here. -->
-    <script src="Scripts/base.js" defer></script>
-    <script src="Scripts/title_icon_randomiser.js" defer></script>
-    <script src="Scripts/whackbox_resizer.js" defer></script>
-    <script src="Scripts/hole.js" defer></script>
-    <script src="Scripts/mole.js" defer></script>
-
-    <!-- Include all of the method-calling scripts here. -->
-    <script src="Scripts/main.js" defer></script>
 </head>
 
 <body>
-    <div id="whackbox-bound">
-        <div id="whackbox">
-            <div id="whackbox-h-layout">
-                <!-- Buttons and elements for horizontal view here. -->
-                <!-- Placeholder image. -->
-                <img src="Sprites/h_whackbox.png" width="960" height="640" />
+    <div class="game-area">
+        <div class="game-bound">
+            <div class="instruction-container">
             </div>
-            <div id="whackbox-v-layout">
-                <!-- Buttons and elements for vertical view here. -->
-                <!-- Placeholder image. -->
-                <img src="Sprites/v_whackbox.png" width="640" height="960" />
+            <div class="slot-container">
+                <div class="game-slot"></div>
+                <div class="game-slot"></div>
+                <div class="game-slot"></div>
             </div>
         </div>
     </div>

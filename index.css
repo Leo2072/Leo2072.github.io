@@ -17,10 +17,10 @@
 
 body
 {
-    /*
-        The method for automatically resizing the whackbox with code requires the parent of the whackbox to have a margin of 0.
-    */
     margin: 0px;
+
+    /* Prevent auto-scrolling */
+    overscroll-behavior-y: none;
     
     /*
         Placeholder background.
@@ -30,10 +30,256 @@ body
 }
 
 
-#whackbox
+
+
+
+/*
+    Config variables for aspect ratios of holes, whackbox, min width, and max sizes.
+    Mostly here for easy readability.
+*/
+:root
+{
+    /* Aspect ratio for the area containing the hole and animal. */
+    --game-slot-aspect-ratio: 1 / 1;
+
+    /*
+        Anything smaller than this should be displayed vertically
+        to keep the texts and images from becoming too small.
+
+        Media queries also rely on this feature, so you must
+        change the min-width field of media queries when updating this variable.
+    */
+    --horizontal-game-content-min-width: 800px;
+
+
+    @media (orientation: landscape) and (min-width: 800px)
+    {
+        /* Can also be 3:1 aspect. */
+        --game-bound-aspect-ratio: 20 / 9;
+        /*
+            Prevent the game from becoming bigger than this to prevent the buttons from becoming
+            too far from each other (or too big to be easily seen).
+        */
+        --game-bound-max-width: 2560px;
+
+        
+        /* Additional padding for the game content relative to the edges of the screen. */
+        --game-content-padding: 0% max(10px, 5%) max(20px, 10%) max(10px, 5%);
+
+        --game-background: radial-gradient(circle at center top, rgb(224, 220, 134) 50%, rgb(0, 134, 224) 80%);
+        --background-to-game-bound-scale: 2;
+    }
+
+    @media (orientation: portrait), not (min-width: 800px)
+    {
+        /* Can also be 3:1 aspect. */
+        --game-bound-aspect-ratio: 9 / 20;
+        /*
+            Prevent the game from becoming bigger than this to prevent the buttons from becoming
+            too far from each other (or too big to be easily seen).
+        */
+        --game-bound-max-width: 800px;
+        
+        /* Additional padding for the game content relative to the edges of the screen. */
+        --game-content-padding: max(10px, 5%) max(10px, 5%) max(20px, 10%) 0%;
+
+        --game-background: radial-gradient(circle at center top, rgb(224, 220, 134) 75%, rgb(0, 134, 224) 80%);
+        --background-to-game-bound-scale: 2;
+    }
+}
+
+
+
+
+/* Horizontal layout. */
+@media (orientation: landscape) and (min-width: 800px)
 {
     /*
-        Placeholder whackbox-background.
+        The class of divs acting as the bounding box for
+        both the hole and the animal that comes out of said hole.
     */
-    background-color: #b2e1c0;
+    .game-slot
+    {
+        height: 100%;
+        aspect-ratio: var(--game-slot-aspect-ratio);
+
+        /* Placeholder background. */
+        background-color: goldenrod;
+    }
+
+    /* The class of divs containing the game-slot divs. */
+    .slot-container
+    {
+        display: flex;
+
+        width: 100%;
+        height: 67%; /* Six-seven... */
+
+        flex-direction: row;
+        justify-content: space-evenly;
+        align-items: center;
+
+        /* Placeholder background. */
+        background-color: cadetblue;
+    }
+
+    /* The class of divs showing which button must be pressed, the score, and the remaining amount of time. */
+    .instruction-container
+    {
+        display: flex;
+        width: 100%;
+        height: 33%;
+
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: start;
+        
+        /* Placeholder background. */
+        background-color: aquamarine;
+    }
+
+    /* The class of divs containing the game items, maintaining an appropriate aspect ratio. */
+    .game-bound
+    {
+        display: flex;
+        box-sizing: border-box; 
+
+        width: 100%;
+        max-width: var(--game-bound-max-width);
+        aspect-ratio: var(--game-bound-aspect-ratio);
+        padding: var(--game-content-padding);
+
+        /* Main axis is the vertical; items are aligned from top down. */
+        flex-direction: column;
+        
+        /* Put a space between the 2 items along the vertical. */
+        justify-content: space-between;
+
+        /* Align items in the middle of the width of the flex box. */
+        align-items: center;
+
+        /* Placeholder background. */
+        background-color: moccasin;
+    }
+
+    /*
+        The class of divs containing a game-box-bound div,
+        for the purpose of rendering a finite background (that differs from the page's background) for the game area.
+    */
+    .game-area
+    {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: center;
+        
+        width: 100%;
+        aspect-ratio: calc(var(--game-bound-aspect-ratio) / var(--background-to-game-bound-scale));
+        max-height: calc(var(--game-bound-max-width) * var(--game-bound-aspect-ratio) * var(--background-to-game-bound-scale));
+
+        /* Placeholder background. */
+        background-color: silver;
+
+        background-image: var(--game-background);
+        background-position: center top;
+        background-size: auto 100%;
+        background-repeat: no-repeat;
+    }
+}
+
+
+
+
+
+
+
+/* Vertical layout. */
+@media (orientation: portrait), not (min-width: 800px)
+{
+    .game-slot
+    {
+        width: 100%;
+        aspect-ratio: var(--game-slot-aspect-ratio);
+        
+        /* Placeholder background. */
+        background-color: goldenrod;
+    }
+
+    /* The class of divs containing the game-slot divs. */
+    .slot-container
+    {
+        display: flex;
+        width: 67%; /* Six-seven... */
+        height: 100%;
+
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+        
+        /* Placeholder background. */
+        background-color: cadetblue;
+    }
+
+    /* The class of divs showing which button must be pressed, the score, and the remaining amount of time. */
+    .instruction-container
+    {
+        display: flex;
+        width: 33%;
+        height: 100%;
+
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: start;
+        
+        /* Placeholder background. */
+        background-color: aquamarine;
+    }
+
+    /* The class of divs containing the game items, maintaining an appropriate aspect ratio. */
+    .game-bound
+    {
+        display: flex;
+        box-sizing: border-box;
+        
+        width: 100%;
+        max-width: var(--game-bound-max-width);
+        aspect-ratio: var(--game-bound-aspect-ratio);
+        padding: var(--game-content-padding);
+
+        /* Main axis is the horizontal; items are aligned from left to right. */
+        flex-direction: row;
+
+        /* Put a space between the 2 items along the horizontal. */
+        justify-content: space-between;
+        
+        /* Align items from the top of the flex box downwards. */
+        align-content: start;
+
+        /* Placeholder background. */
+        background-color: moccasin;
+    }
+
+    /*
+        The class of divs containing a game-box-bound div,
+        for the purpose of rendering a finite background (that differs from the page's background) for the game area.
+    */
+    .game-area
+    {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: center;
+
+        width: 100%;
+        aspect-ratio: calc(var(--game-bound-aspect-ratio) / var(--background-to-game-bound-scale));
+        max-height: calc(var(--game-bound-max-width) * var(--game-bound-aspect-ratio) * var(--background-to-game-bound-scale));
+
+        background-image: var(--game-background);
+        background-position: center top;
+        background-size: auto 100%;
+        background-repeat: no-repeat;
+        
+        /* Placeholder background. */
+        background-color: silver;
+    }
 }
