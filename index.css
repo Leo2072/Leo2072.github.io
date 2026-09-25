@@ -15,7 +15,6 @@
 }
 
 
-
 /*
     Config variables for aspect ratios of holes, whackbox, min width, and max sizes.
     Mostly here for easy readability.
@@ -24,7 +23,6 @@
 {
     /* Aspect ratio for the area containing the hole and animal. */
     --game-slot-aspect-ratio: 1 / 1;
-
     /*
         Anything smaller than this should be displayed vertically
         to keep the texts and images from becoming too small.
@@ -33,7 +31,6 @@
         change the min-width field of media queries when updating this variable.
     */
     --horizontal-game-content-min-width: 800px;
-
     /*
         Gap size to separate the slot container and the instruction container.
     */
@@ -49,14 +46,10 @@
             too far from each other (or too big to be easily seen).
         */
         --game-bound-max-width: 2560px;
-
-        
         /* Additional padding for the game content relative to the edges of the screen. */
         --game-content-padding: 0px clamp(10px, 5%, 100px) clamp(20px, 10%, 200px) clamp(10px, 5%, 100px);
-        
         /* Become fully transparent at the edge of the element. */
         --game-background: radial-gradient(ellipse farthest-side at center top, rgba(255, 228, 91, 1) 90%, rgba(97, 97, 255, 0));
-        
         /*
             Set the width of the background to the max width of the game area, times some additional factor.
             --background-width: calc(var(--game-bound-max-width) * 2.5);
@@ -65,7 +58,6 @@
             Additionally divide this by half since we are only using the bottom half of an ellipse for the background.
             --background-height: calc(var(--background-width) / (var(--game-bound-aspect-ratio)) * 0.5);
         */
-
         /* Make the background square because this is a circular gradient. */
         /*
             To do this, apply the aspect ratio to the game-bound-max-width
@@ -89,13 +81,10 @@
             too far from each other (or too big to be easily seen).
         */
         --game-bound-max-width: 1920px;
-        
         /* Additional padding for the game content relative to the edges of the screen. */
         --game-content-padding: clamp(10px, 5%, 100px) clamp(10px, 5%, 100px) clamp(20px, 10%, 200px) 0px;
-        
         /* Become fully transparent at the edge of the element. */
         --game-background: radial-gradient(ellipse farthest-side at left top, rgba(255, 228, 91, 1) 90%, rgba(97, 97, 255, 0));
-        
         /*
             Set the width of the background to the max width of the game area, times some additional factor.
             Additionally divide this by half, since we are only use the bottom right quarter of an ellipse for the background.
@@ -105,7 +94,6 @@
             Additionally divide this by half, since we are only use the bottom right quarter of an ellipse for the background.
             --background-height: calc(var(--background-width) / (var(--game-bound-aspect-ratio)) * 0.5);
         */
-
         /* Make the background square because this is a circular gradient. */
         /*
             To do this, apply the aspect ratio to the game-bound-max-width
@@ -125,7 +113,6 @@
 
 
 
-
 /* Horizontal layout. */
 @media (orientation: landscape) and (min-width: 800px)
 {
@@ -135,6 +122,8 @@
     */
     .game-slot
     {
+        position:relative;
+
         height: 100%;
         aspect-ratio: var(--game-slot-aspect-ratio);
 
@@ -197,6 +186,31 @@
         /* Align items in the middle of the width of the flex box. */
         align-items: center;
 
+
+
+        /*
+            Game state value for the penguin's ability.
+            When the ability is in full in effect, this value is 1 (affected items become dark).
+            When the ability is not in effect, this value is 0 (affected items remain bright).
+        */
+        --game-darkness: 0;
+
+        /*
+            By applying sepia, the hues of all colours are effectively set to the same value, allowing for hue-rotate too create a tint.
+            The contrast applied at first is to make the sepia a bit less vibrant.
+            The contrast applied later on is to make the result colour less washed out.
+
+            This property must be placed at the same level as the game-darkness
+            for elements that directly change game-darkness, in order for the change be to reflected.
+        */
+        --game-darkness-filter: contrast(calc(100% - 100% * var(--game-darkness)))
+                                sepia(calc(100% * var(--game-darkness)))
+                                hue-rotate(calc(220deg * var(--game-darkness) * var(--game-darkness)))
+                                contrast(calc(100% + 100% * var(--game-darkness)))
+                                brightness(calc(100% - 60% * var(--game-darkness)));
+
+
+
         /* Placeholder background. */
         background-color: rgba(255, 228, 91, 1);
     }
@@ -209,6 +223,7 @@
 {
     .game-slot
     {
+        position:relative;
         width: 100%;
         aspect-ratio: var(--game-slot-aspect-ratio);
         
@@ -269,11 +284,44 @@
         /* Align items from the top of the flex box downwards. */
         align-content: start;
 
+
+
+        /*
+            Game state value for the penguin's ability.
+            When the ability is in full in effect, this value is 1 (affected items become dark).
+            When the ability is not in effect, this value is 0 (affected items remain bright).
+        */
+        --game-darkness: 0;
+
+        /*
+            By applying sepia, the hues of all colours are effectively set to the same value, allowing for hue-rotate too create a tint.
+            The contrast applied at first is to make the sepia a bit less vibrant.
+            The contrast applied later on is to make the result colour less washed out.
+
+            This property must be placed at the same level as the game-darkness
+            for elements that directly change game-darkness, in order for the change be to reflected.
+        */
+        --game-darkness-filter: contrast(calc(100% - 100% * var(--game-darkness)))
+                                sepia(calc(100% * var(--game-darkness)))
+                                hue-rotate(calc(220deg * var(--game-darkness) * var(--game-darkness)))
+                                contrast(calc(100% + 100% * var(--game-darkness)))
+                                brightness(calc(100% - 60% * var(--game-darkness)));
+
+
+
         /* Placeholder background. */
         background-color: rgba(255, 228, 91, 1);
     }
 }
 
+.animal-button
+{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    filter: var(--game-darkness-filter);
+    image-rendering: pixelated;
+}
 
 
 
