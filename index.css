@@ -51,6 +51,11 @@ body
     */
     --horizontal-game-content-min-width: 800px;
 
+    /*
+        Gap size to separate the slot container and the instruction container.
+    */
+    --game-slot-and-instruction-gap-size: 0px;
+
 
     @media (orientation: landscape) and (min-width: 800px)
     {
@@ -64,10 +69,11 @@ body
 
         
         /* Additional padding for the game content relative to the edges of the screen. */
-        --game-content-padding: 0% max(10px, 5%) max(20px, 10%) max(10px, 5%);
-
-        --game-background: radial-gradient(circle at center top, rgb(224, 220, 134) 50%, rgb(0, 134, 224) 80%);
-        --background-to-game-bound-scale: 2;
+        --game-content-padding: 0px clamp(10px, 5%, 100px) clamp(20px, 10%, 200px) clamp(10px, 5%, 100px);
+        
+        /* Become fully transparent at the edge of the element. */
+        --game-background: radial-gradient(ellipse farthest-side at center top, rgba(255, 228, 91, 1) 90%, rgba(97, 97, 255, 0));
+        --background-to-game-bound-scale: 1.75;
     }
 
     @media (orientation: portrait), not (min-width: 800px)
@@ -78,13 +84,14 @@ body
             Prevent the game from becoming bigger than this to prevent the buttons from becoming
             too far from each other (or too big to be easily seen).
         */
-        --game-bound-max-width: 800px;
+        --game-bound-max-width: 1920px;
         
         /* Additional padding for the game content relative to the edges of the screen. */
-        --game-content-padding: max(10px, 5%) max(10px, 5%) max(20px, 10%) 0%;
-
-        --game-background: radial-gradient(circle at center top, rgb(224, 220, 134) 75%, rgb(0, 134, 224) 80%);
-        --background-to-game-bound-scale: 2;
+        --game-content-padding: clamp(10px, 5%, 100px) clamp(10px, 5%, 100px) clamp(20px, 10%, 200px) 0px;
+        
+        /* Become fully transparent at the edge of the element. */
+        --game-background: radial-gradient(ellipse farthest-side at center top, rgba(255, 228, 91, 1) 90%, rgba(97, 97, 255, 0));
+        --background-to-game-bound-scale: 1.75;
     }
 }
 
@@ -128,7 +135,7 @@ body
     {
         display: flex;
         width: 100%;
-        height: 33%;
+        height: 25%;
 
         flex-direction: row;
         justify-content: space-between;
@@ -148,6 +155,7 @@ body
         max-width: var(--game-bound-max-width);
         aspect-ratio: var(--game-bound-aspect-ratio);
         padding: var(--game-content-padding);
+        gap: var(--game-slot-and-instruction-gap-size);
 
         /* Main axis is the vertical; items are aligned from top down. */
         flex-direction: column;
@@ -159,7 +167,7 @@ body
         align-items: center;
 
         /* Placeholder background. */
-        background-color: moccasin;
+        background-color: rgba(255, 228, 91, 1);
     }
 
     /*
@@ -169,20 +177,32 @@ body
     .game-area
     {
         display: flex;
+        box-sizing: content-box;
         flex-direction: column;
         justify-content: start;
         align-items: center;
         
         width: 100%;
-        aspect-ratio: calc(var(--game-bound-aspect-ratio) / var(--background-to-game-bound-scale));
-        max-height: calc(var(--game-bound-max-width) * var(--game-bound-aspect-ratio) * var(--background-to-game-bound-scale));
+        /*
+            Set the aspect ratio so that the browser automatically calculates
+            the height of the background container based on the width of the game bounds.
+        */
+        aspect-ratio: var(--game-bound-aspect-ratio);
+        /* Make sure the height at least covers the entire height of the screen. */
+        min-height: 100vh;
 
-        /* Placeholder background. */
-        background-color: silver;
+        /* Limit the width to game-bound-max-width * background-to-game-bound-scale. */
+        max-width: calc(var(--game-bound-max-width) * var(--background-to-game-bound-scale));
+        /* Limit the height to game-boundmax-height * background-to-game-bound-scale. */
+        max-height: calc(var(--game-bound-max-width) * var(--background-to-game-bound-scale) / (var(--game-bound-aspect-ratio)));
+
+        /* Cheat method to centre this div. */
+        margin: auto;
 
         background-image: var(--game-background);
         background-position: center top;
-        background-size: auto 100%;
+        background-size: calc(var(--game-bound-max-width) * var(--background-to-game-bound-scale))
+                         calc(var(--game-bound-max-width) * var(--background-to-game-bound-scale) / (var(--game-bound-aspect-ratio)));
         background-repeat: no-repeat;
     }
 }
@@ -224,7 +244,7 @@ body
     .instruction-container
     {
         display: flex;
-        width: 33%;
+        width: 25%;
         height: 100%;
 
         flex-direction: column;
@@ -245,6 +265,7 @@ body
         max-width: var(--game-bound-max-width);
         aspect-ratio: var(--game-bound-aspect-ratio);
         padding: var(--game-content-padding);
+        gap: var(--game-slot-and-instruction-gap-size);
 
         /* Main axis is the horizontal; items are aligned from left to right. */
         flex-direction: row;
@@ -256,7 +277,7 @@ body
         align-content: start;
 
         /* Placeholder background. */
-        background-color: moccasin;
+        background-color: rgba(255, 228, 91, 1);
     }
 
     /*
@@ -271,15 +292,26 @@ body
         align-items: center;
 
         width: 100%;
-        aspect-ratio: calc(var(--game-bound-aspect-ratio) / var(--background-to-game-bound-scale));
-        max-height: calc(var(--game-bound-max-width) * var(--game-bound-aspect-ratio) * var(--background-to-game-bound-scale));
+        /*
+            Set the aspect ratio so that the browser automatically calculates
+            the height of the background container based on the width of the game bounds.
+        */
+        aspect-ratio: var(--game-bound-aspect-ratio);
+        /* Make sure the height at least covers the entire height of the screen. */
+        min-height: 100vh;
+
+        /* Limit the width to game-bound-max-width * background-to-game-bound-scale. */
+        max-width: calc(var(--game-bound-max-width) * var(--background-to-game-bound-scale));
+        /* Limit the height to game-boundmax-height * background-to-game-bound-scale. */
+        max-height: calc(var(--game-bound-max-width) * var(--background-to-game-bound-scale) / (var(--game-bound-aspect-ratio)));
+
+        /* Cheat method to centre this div. */
+        margin: auto;
 
         background-image: var(--game-background);
         background-position: center top;
-        background-size: auto 100%;
+        background-size: calc(var(--game-bound-max-width) * var(--background-to-game-bound-scale))
+                         calc(var(--game-bound-max-width) * var(--background-to-game-bound-scale) / (var(--game-bound-aspect-ratio)));
         background-repeat: no-repeat;
-        
-        /* Placeholder background. */
-        background-color: silver;
     }
 }
