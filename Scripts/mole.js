@@ -3,8 +3,18 @@ var MOLE_STATE_ACTIVE     = "active";
 var MOLE_STATE_DESPAWNING = "despawning";
 
 var MOLE_RISE_SPEED = 4.0;
-var MOLE_CORRECT_DURATION = 1500;
-var MOLE_INCORRECT_DURATION = 2000;
+
+var GIF_DURATIONS_MS = {
+    penguin_action:     4550,
+    penguin_correct:    1250,
+    penguin_incorrect:  3150,
+    raccoon_action:     3800,
+    raccoon_correct:    1000,
+    raccoon_incorrect:  2450,
+    dog_action:         1000,
+    dog_correct:        1000,
+    dog_incorrect:      1000,
+};
 
 class Mole extends ProcessTreeNode
 {
@@ -12,24 +22,28 @@ class Mole extends ProcessTreeNode
     {
         super(parent);
 
-        this.type = type;              // e.g. "penguin", "raccoon", "dog"
+        this.type = type;                   // e.g. "penguin", "raccoon", "dog"
         this.hole = null;
-        this.element = null;           // hole.slotElement
-        this.visualElement = null;     // the .animal-button img inside that slot
 
         this.out = 0.0;
         this.state = MOLE_STATE_SPAWNING;
 
         this.hasBeenHovered = false;
+        this.hasUsedOnHitSpecial = false;
+        this.lingerTime = 0.0;              // seconds alive
+        this.onExit = null;                 // optional callback(hole), fired once this mole finishes despawning.
 
-        this._resetTimer = null;
+        this.isBusy = false;                // disable hits while busy
+
+        this.currentSpriteState = "idle";   // store this for redraw after hole change
+        this.resetTimer = null;
     }
 
     // Only update the y-translation for in/out animations, since css handles the rest of the scaling
     updateLayout()
     {
-        if (this.visualElement == null) return;
-        this.visualElement.style.transform = "translateY(" + ((1.0 - this.out) * 100) + "%)";
+        if (this.hole == null || this.hole.visualElement == null) return;
+        this.hole.visualElement.style.transform = "translateY(" + ((1.0 - this.out) * 100) + "%)";
     }
 
     spawn(hole)
@@ -39,8 +53,7 @@ class Mole extends ProcessTreeNode
             return false;
         }
 
-        this.element = hole.slotElement;
-        this.visualElement = this.element.querySelector(".animal-button");
+        this.playSprite("idle");
         this.out = 0.0;
         this.state = MOLE_STATE_SPAWNING;
         this.updateLayout();
@@ -51,7 +64,7 @@ class Mole extends ProcessTreeNode
     // Starts the sink animation; the mole detaches and deletes itself once fully hidden.
     despawn()
     {
-        if (this.state === MOLE_STATE_DESPAWNING)
+        if (this.state == MOLE_STATE_DESPAWNING)
         {
             return;
         }
@@ -63,7 +76,7 @@ class Mole extends ProcessTreeNode
     {
         super.tick(delta);
 
-        if (this.state === MOLE_STATE_SPAWNING)
+        if (this.state == MOLE_STATE_SPAWNING)
         {
             this.out = clamp(this.out + MOLE_RISE_SPEED * delta, 0.0, 1.0);
             this.updateLayout();
@@ -72,7 +85,12 @@ class Mole extends ProcessTreeNode
                 this.state = MOLE_STATE_ACTIVE;
             }
         }
-        else if (this.state === MOLE_STATE_DESPAWNING)
+        else if (this.state == MOLE_STATE_ACTIVE)
+        {
+            this.lingerTime += delta;
+            this.onLinger(this.lingerTime);
+        }
+        else if (this.state == MOLE_STATE_DESPAWNING)
         {
             this.out = clamp(this.out - MOLE_RISE_SPEED * delta, 0.0, 1.0);
             this.updateLayout();
@@ -84,6 +102,7 @@ class Mole extends ProcessTreeNode
                     hole.detachMole();
                 }
                 this.queue_delete();
+                if (this.onExit) this.onExit(hole);
             }
         }
     }
@@ -91,22 +110,41 @@ class Mole extends ProcessTreeNode
     // Override for interactions
     onSpawn() {}
     onDespawn() {}
-    onHit() { this.playAnimation("correct", MOLE_CORRECT_DURATION); }
-    onMiss() { this.playAnimation("incorrect", MOLE_INCORRECT_DURATION); }
+
+    onHit()
+    {
+        this.playAnimation("correct");
+        this.despawn();
+    }
+
+    onMiss() {
+        this.playAnimation("incorrect");
+    }
     onHover() {}
+    onLinger(lingerTime) {}
 
     playSprite(state)
     {
-        if (this.visualElement == null) return;
-        this.visualElement.src = spriteBasePathFor(this.type) + "_" + state + ".gif";
+        this.currentSpriteState = state;
+        if (this.hole == null || this.hole.visualElement == null) return;
+        var ext = state == "idle" ? "png" : "gif";
+        this.hole.visualElement.src = spriteBasePathFor(this.type) + "_" + state + "." + ext;
     }
 
-    // playSprite, but resets to idle animation after duration
-    playAnimation(state, duration)
+    // playSprite, but resets to idle once the animation is finished
+    playAnimation(state)
     {
         this.playSprite(state);
-        clearTimeout(this._resetTimer);
-        this._resetTimer = setTimeout(() => this.playSprite("idle"), duration);
+        clearTimeout(this.resetTimer);
+
+        var duration = GIF_DURATIONS_MS[this.type + "_" + state];
+        this.resetTimer = setTimeout(() => this.playSprite("idle"), duration);
+    }
+
+    // Redraws this mole's last sprite state into its current hole
+    refreshSprite()
+    {
+        this.playSprite(this.currentSpriteState);
     }
 }
 

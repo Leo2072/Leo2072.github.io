@@ -9,7 +9,13 @@ class Hole extends ProcessTreeNode
         this.index = index;
         this.mole = null;
         this.is_occupied = false;
-        this.slotElement = slotElement;
+        this.slotElement = null;
+        this.visualElement = null;
+
+        if (slotElement != null)
+        {
+            this.bindElement(slotElement);
+        }
 
         holes.push(this);
     }
@@ -17,6 +23,7 @@ class Hole extends ProcessTreeNode
     bindElement(element)
     {
         this.slotElement = element;
+        this.visualElement = element != null ? element.querySelector(".animal-button") : null;
     }
 
     attachMole(mole)
@@ -48,7 +55,7 @@ class Hole extends ProcessTreeNode
     // Swaps moles with another hole
     swapWith(otherHole)
     {
-        if (otherHole === this) return;
+        if (otherHole == this) return;
 
         var thisMole = this.mole;
         var otherMole = otherHole.mole;
@@ -61,6 +68,10 @@ class Hole extends ProcessTreeNode
 
         if (thisMole != null) thisMole.hole = otherHole;
         if (otherMole != null) otherMole.hole = this;
+
+        // Redraw both
+        if (thisMole != null) thisMole.refreshSprite();
+        if (otherMole != null) otherMole.refreshSprite();
 
         this.updateLayout();
         otherHole.updateLayout();
