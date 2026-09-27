@@ -123,6 +123,8 @@
     .game-slot
     {
         position:relative;
+        cursor: pointer;
+        overflow: hidden;
 
         height: 100%;
         aspect-ratio: var(--game-slot-aspect-ratio);
@@ -224,9 +226,11 @@
     .game-slot
     {
         position:relative;
+        cursor: pointer;
+        overflow: hidden;
         width: 100%;
         aspect-ratio: var(--game-slot-aspect-ratio);
-        
+
         /* Placeholder background. */
         background-color: goldenrod;
     }
@@ -349,4 +353,20 @@ body
     }
 
     background-size: var(--background-width) var(--background-height), auto auto;
+}
+
+
+#score-display,
+#timer-display
+{
+    padding: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+#target-display
+{
+    padding: 10px;
+    font-size: 1.6em;
+    font-weight: bold;
 }
