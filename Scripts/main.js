@@ -1,10 +1,10 @@
 randomiseTitleIcon()
 
+startPerFrameProcessLoop();
 
-new Hole(0, processTreeRoot);
-new Hole(1, processTreeRoot);
-new Hole(2, processTreeRoot);
-
+new Hole(0, processTreeRoot, document.getElementsByClassName("game-slot")[0]);
+new Hole(1, processTreeRoot, document.getElementsByClassName("game-slot")[1]);
+new Hole(2, processTreeRoot, document.getElementsByClassName("game-slot")[2]);
 
 var gameRootElement = document.getElementsByClassName("game-bound")[0];
 
@@ -24,63 +24,104 @@ var currentTarget = 0;
 
 var animalNames = ["penguin", "raccoon", "dog"];
 
-var spriteBases = [
-    "Sprites/Penguin/penguin",
-    "Sprites/Raccoon/raccoon",
-    null
-];
-
-var resetTimers = [null, null, null];
-
-var correctDurations   = [1950, 1250, 1500];
-var incorrectDurations = [3150, 2450, 2000];
-
-function showSprite(index, state, ext, duration)
+var moleClasses =
 {
-    if (spriteBases[index] == null) return;
-    clearTimeout(resetTimers[index]);
-    slots[index].querySelector("img").src = spriteBases[index] + "_" + state + "." + ext;
-    resetTimers[index] = setTimeout(() => resetSprite(index), duration);
+    penguin: Penguin,
+    raccoon: Raccoon,
+    dog: Dog
+};
+
+function spawnMole(hole)
+{
+    // Avoid spawning a type that's already active (and not itself despawning) in another hole.
+    var usedTypes = holes
+        .filter((h) => h !== hole && h.mole != null && h.mole.state !== MOLE_STATE_DESPAWNING)
+        .map((h) => h.mole.type);
+    var availableTypes = animalNames.filter((name) => !usedTypes.includes(name));
+    var pool = availableTypes.length > 0 ? availableTypes : animalNames;
+
+    var type = randomItemFromArray(pool);
+    var mole = new moleClasses[type](processTreeRoot);
+    mole.onExit = (exitedHole) => spawnMole(exitedHole);
+    mole.spawn(hole);
 }
 
-function resetSprite(index)
-{
-    if (spriteBases[index] == null) return;
-    slots[index].querySelector("img").src = spriteBases[index] + "_idle.png";
-}
+var scoreElement = document.getElementById("score-display");
+var targetElement = document.getElementById("target-display");
+var timerElement = document.getElementById("timer-display");
 
-var scoreEl = document.getElementById("score-display");
-var targetEl = document.getElementById("target-display");
-var timerEl = document.getElementById("timer-display");
-
+// Choose a mole target
 function pickTarget()
 {
-    currentTarget = Math.floor(Math.random() * 3);
-    targetEl.textContent = "Click: " + animalNames[currentTarget];
+    var presentTypes = holes
+        .filter((hole) => hole.mole != null && hole.mole.state !== MOLE_STATE_DESPAWNING)
+        .map((hole) => hole.mole.type);
+
+    var pool = presentTypes.length > 0 ? [...new Set(presentTypes)] : animalNames;
+
+    var chosenType = randomItemFromArray(pool);
+    currentTarget = animalNames.indexOf(chosenType);
+    targetElement.textContent = "Click: " + animalNames[currentTarget];
 }
 
-function onSlotClicked(index)
+// Despawn all moles and create new ones
+function resetAllMoles()
 {
-    if (timeLeft <= 0) return;
+    var occupiedHoles = holes.filter((hole) => hole.mole != null);
 
-    if (index === currentTarget)
+    if (occupiedHoles.length == 0)
     {
-        score++;
-        scoreEl.textContent = "Score: " + score;
-        showSprite(index, "correct", "gif", correctDurations[index]);
         pickTarget();
+        return;
     }
-    else
+
+    var pendingCount = occupiedHoles.length;
+
+    for (let hole of occupiedHoles)
     {
-        timeLeft = Math.max(0, timeLeft - 5);
-        showSprite(index, "incorrect", "gif", incorrectDurations[index]);
+        let originalOnExit = hole.mole.onExit;
+        hole.mole.onExit = (exitedHole) =>
+        {
+            if (originalOnExit) originalOnExit(exitedHole);
+
+            pendingCount--;
+            if (pendingCount == 0)
+            {
+                pickTarget();
+            }
+        };
+        hole.mole.despawn();
     }
 }
 
-var slots = document.getElementsByClassName("game-slot");
-slots[0].addEventListener("click", () => onSlotClicked(0));
-slots[1].addEventListener("click", () => onSlotClicked(1));
-slots[2].addEventListener("click", () => onSlotClicked(2));
+for (let hole of holes)
+{
+    hole.slotElement.addEventListener("click", () =>
+    {
+        if (timeLeft <= 0 || hole.mole == null) return;
+
+        if (hole.mole.type == animalNames[currentTarget])
+        {
+            var hitMole = hole.mole;
+            hitMole.onHit();
+
+            // Only increase score if the mole is in a despawning state
+            if (hitMole.state == MOLE_STATE_DESPAWNING)
+            {
+                score++;
+                scoreElement.textContent = "Score: " + score;
+                resetAllMoles();
+            }
+        }
+        else
+        {
+            timeLeft = Math.max(0, timeLeft - 5);
+            hole.mole.onMiss();
+        }
+    });
+
+    spawnMole(hole);
+}
 
 pickTarget();
 
@@ -89,10 +130,10 @@ setInterval(() =>
     if (timeLeft > 0)
     {
         timeLeft -= 0.1;
-        timerEl.textContent = "Time: " + Math.ceil(timeLeft);
+        timerElement.textContent = "Time: " + Math.ceil(timeLeft);
     }
     else
     {
-        targetEl.textContent = "Game over!";
+        targetElement.textContent = "Game over!";
     }
 }, 100);
