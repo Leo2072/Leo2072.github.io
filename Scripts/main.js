@@ -23,6 +23,7 @@ var timeLeft = 30;
 var currentTarget = 0;
 
 var animalNames = ["penguin", "raccoon", "dog"];
+var raccoonSlot = 1;
 
 var spriteBases = [
     "Sprites/Penguin/penguin",
@@ -83,6 +84,20 @@ slots[1].addEventListener("click", () => onSlotClicked(1));
 slots[2].addEventListener("click", () => onSlotClicked(2));
 
 pickTarget();
+
+function scheduleRaccoonWarn()
+{
+    setTimeout(() =>
+    {
+        if (timeLeft > 0)
+        {
+            showSprite(raccoonSlot, "action_warn", "png", 2500);
+        }
+        scheduleRaccoonWarn();
+    }, 5000 + Math.random() * 5000);
+}
+
+scheduleRaccoonWarn();
 
 setInterval(() =>
 {
