@@ -350,3 +350,19 @@ body
 
     background-size: var(--background-width) var(--background-height), auto auto;
 }
+
+
+#score-display,
+#timer-display
+{
+    padding: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+#target-display
+{
+    padding: 10px;
+    font-size: 1.6em;
+    font-weight: bold;
+}
