@@ -13,6 +13,7 @@
     <script src="Scripts/title_icon_randomiser.js" defer></script>
     <script src="Scripts/hole.js" defer></script>
     <script src="Scripts/mole.js" defer></script>
+    <script src="Scripts/dog.js" defer></script>
     <script src="Scripts/penguin.js" defer></script>
 
     <!-- Include all of the method-calling scripts here. -->
@@ -22,16 +23,19 @@
 <body>
     <div class="game-bound">
         <div class="instruction-container">
+            <div id="score-display">Score: 0</div>
+            <div id="target-display">Click: ?</div>
+            <div id="timer-display">Time: 30</div>
         </div>
         <div class="slot-container">
             <div class="game-slot">
-                <img class="animal-button" src="Sprites/penguin_title_icon.png" />
+                <img class="animal-button" src="Sprites/Penguin/penguin_idle.png" />
             </div>
             <div class="game-slot">
-                <img class="animal-button" src="Sprites/raccoon_title_icon.png" />
+                <img class="animal-button" src="Sprites/Raccoon/raccoon_idle.png" />
             </div>
             <div class="game-slot">
-                <img class="animal-button" src="Sprites/dog_title_icon.png" />
+                <img class="animal-button" />
             </div>
         </div>
     </div>
