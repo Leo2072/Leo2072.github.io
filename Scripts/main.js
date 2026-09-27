@@ -28,11 +28,44 @@ var scoreEl = document.getElementById("score-display");
 var targetEl = document.getElementById("target-display");
 var timerEl = document.getElementById("timer-display");
 
-function updateDisplays()
+function pickTarget()
 {
-    scoreEl.textContent = "Score: " + score;
+    currentTarget = Math.floor(Math.random() * 3);
     targetEl.textContent = "Click: " + animalNames[currentTarget];
-    timerEl.textContent = "Time: " + Math.ceil(timeLeft);
 }
 
-updateDisplays();
+function onSlotClicked(index)
+{
+    if (timeLeft <= 0) return;
+
+    if (index === currentTarget)
+    {
+        score++;
+        scoreEl.textContent = "Score: " + score;
+        pickTarget();
+    }
+    else
+    {
+        timeLeft = Math.max(0, timeLeft - 5);
+    }
+}
+
+var slots = document.getElementsByClassName("game-slot");
+slots[0].addEventListener("click", () => onSlotClicked(0));
+slots[1].addEventListener("click", () => onSlotClicked(1));
+slots[2].addEventListener("click", () => onSlotClicked(2));
+
+pickTarget();
+
+setInterval(() =>
+{
+    if (timeLeft > 0)
+    {
+        timeLeft -= 0.1;
+        timerEl.textContent = "Time: " + Math.ceil(timeLeft);
+    }
+    else
+    {
+        targetEl.textContent = "Game over!";
+    }
+}, 100);
