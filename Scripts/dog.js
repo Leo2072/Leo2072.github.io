@@ -11,10 +11,15 @@ class Dog extends Mole
         this.scheduleFur();
     }
 
-    // queue the next fur spread at a random interval
+    // queue the next fur spread at a random interval, with a short warning first
     scheduleFur()
     {
-        this.furTimer = setTimeout(() => this.spreadFur(), 4000 + Math.random() * 4000);
+        this.furTimer = setTimeout(() =>
+        {
+            if (this.state === MOLE_STATE_DESPAWNING) return;
+            this.playSprite("action_warn");
+            this.furTimer = setTimeout(() => this.spreadFur(), 1500);
+        }, 4000 + Math.random() * 4000);
     }
 
     // cover other occupied holes with fur
@@ -25,7 +30,7 @@ class Dog extends Mole
         this.scheduleFur();
     }
 
-    // add a fur overlay to a hole; clicking it clears the fur and penalises if wrong animal
+    // add a fur overlay to a hole; clicking it clears the fur and penalizes if wrong animal
     applyFur(hole)
     {
         if (hole.slotElement.querySelector(".fur-overlay")) return;

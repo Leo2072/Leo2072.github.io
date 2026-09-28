@@ -374,6 +374,11 @@ body
     font-weight: bold;
 }
 
+.timer-penalty
+{
+    color: red;
+}
+
 #target-display
 {
     padding: 10px;

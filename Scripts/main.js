@@ -51,13 +51,16 @@ var scoreElement = document.getElementById("score-display");
 var targetElement = document.getElementById("target-display");
 var timerElement = document.getElementById("timer-display");
 
-// briefly show a floating -5s indicator when the player is penalised
+// briefly show a floating -5s indicator and flash the timer red when the player is penalized
 function showPenalty()
 {
     var el = document.createElement("div");
     el.className = "penalty-text";
     el.textContent = "-5s";
     gameRootElement.appendChild(el);
+
+    timerElement.classList.add("timer-penalty");
+    setTimeout(() => timerElement.classList.remove("timer-penalty"), 300);
     setTimeout(() => el.remove(), 1000);
 }
 

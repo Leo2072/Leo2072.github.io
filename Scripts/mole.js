@@ -12,8 +12,8 @@ var GIF_DURATIONS_MS = {
     raccoon_correct:    1000,
     raccoon_incorrect:  2450,
     dog_action:         1000,
-    dog_correct:        1000,
-    dog_incorrect:      1000,
+    dog_correct:        1950,
+    dog_incorrect:      1950,
 };
 
 class Mole extends ProcessTreeNode
