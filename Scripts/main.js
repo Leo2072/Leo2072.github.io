@@ -127,6 +127,13 @@ for (let hole of holes)
     {
         if (timeLeft <= 0 || hole.mole == null) return;
 
+        // sleeping penguin wakes on any click with no penalty
+        if (hole.mole instanceof Penguin && hole.mole.isAsleep)
+        {
+            hole.mole.onHit();
+            return;
+        }
+
         if (hole.mole.type == animalNames[currentTarget])
         {
             var hitMole = hole.mole;

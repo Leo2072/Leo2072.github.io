@@ -20,7 +20,11 @@ class Raccoon extends Mole
         // play action gif and swap once it finishes
         fromHole.visualElement.src = "";
         fromHole.visualElement.src = "Sprites/Raccoon/raccoon_action.gif";
-        setTimeout(() => fromHole.swapWith(toHole), 2850);
+        setTimeout(() =>
+        {
+            fromHole.swapWith(toHole);
+            holes.forEach(h => { if (h.mole instanceof Penguin && h.mole.isAsleep) h.mole.wake(); });
+        }, 2850);
     }
 
     onHit()
