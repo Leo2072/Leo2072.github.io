@@ -32,7 +32,7 @@ class Dog extends Mole
         this.scheduleFur();
     }
 
-    // swap the hole's sprite to the fur pile; clicking it restores the animal and penalizes if wrong
+    // swap the hole's sprite to the fur pile; clicking it just uncovers the animal (no penalty, only wastes a click)
     applyFur(hole)
     {
         if (hole.mole == null || hole.isFurred) return;
@@ -51,11 +51,6 @@ class Dog extends Mole
             hole.isFurred = false;
             if (hole.mole != null) hole.mole.refreshSprite();
             hole.slotElement.removeEventListener("click", hole.clearFurHandler);
-            if (hole.mole != null && hole.mole.type !== animalNames[currentTarget])
-            {
-                timeLeft = Math.max(0, timeLeft - 5);
-                showPenalty();
-            }
         });
     }
 

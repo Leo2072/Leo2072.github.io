@@ -13,7 +13,7 @@ setDarkness(gameRootElement, 0);
 
 // Game state
 var score = 0;
-var timeLeft = 30;
+var timeLeft = 60;
 var currentTarget = 0;
 
 var animalNames = ["penguin", "raccoon", "dog"];

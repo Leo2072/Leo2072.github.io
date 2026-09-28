@@ -28,7 +28,7 @@ class Penguin extends Mole
         this.sleepFreezeTimer = setTimeout(() =>
         {
             if (!this.isAsleep) return;
-            if (this.hole != null && this.hole.visualElement != null)
+            if (this.hole != null && this.hole.visualElement != null && !this.hole.isFurred)
                 this.hole.visualElement.src = "Sprites/Penguin/penguin_action.png";
             setDarkness(gameRootElement, 1);
             targetElement.style.visibility = "hidden";
@@ -50,7 +50,7 @@ class Penguin extends Mole
     {
         if (this.isAsleep)
         {
-            if (this.hole != null && this.hole.visualElement != null)
+            if (this.hole != null && this.hole.visualElement != null && !this.hole.isFurred)
                 this.hole.visualElement.src = "Sprites/Penguin/penguin_action.png";
             return;
         }
