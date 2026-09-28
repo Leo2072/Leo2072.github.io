@@ -35,7 +35,13 @@ class Dog extends Mole
     {
         if (hole.mole == null || hole.mole.isFurred) return;
         hole.mole.isFurred = true;
-        hole.visualElement.src = "Sprites/Dog/dog_fur_pile.png";
+        hole.visualElement.src = "";
+        hole.visualElement.src = "Sprites/Dog/dog_fur_pile.gif";
+        setTimeout(() =>
+        {
+            if (hole.mole != null && hole.mole.isFurred)
+                hole.visualElement.src = "Sprites/Dog/dog_fur_pile.png";
+        }, 1400);
 
         hole.slotElement.addEventListener("click", hole.mole.clearFurHandler = (e) =>
         {
