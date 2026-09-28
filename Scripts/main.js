@@ -126,6 +126,7 @@ for (let hole of holes)
     hole.slotElement.addEventListener("click", () =>
     {
         if (timeLeft <= 0 || hole.mole == null) return;
+        if (hole.isFurred) return;
 
         // sleeping penguin wakes on any click with no penalty
         if (hole.mole instanceof Penguin && hole.mole.isAsleep)

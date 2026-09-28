@@ -127,6 +127,7 @@ class Mole extends ProcessTreeNode
     {
         this.currentSpriteState = state;
         if (this.hole == null || this.hole.visualElement == null) return;
+        if (this.hole.isFurred) return;
         var ext = state == "idle" ? "png" : "gif";
         this.hole.visualElement.src = spriteBasePathFor(this.type) + "_" + state + "." + ext;
     }

@@ -35,23 +35,23 @@ class Dog extends Mole
     // swap the hole's sprite to the fur pile; clicking it restores the animal and penalizes if wrong
     applyFur(hole)
     {
-        if (hole.mole == null || hole.mole.isFurred) return;
-        hole.mole.isFurred = true;
+        if (hole.mole == null || hole.isFurred) return;
+        hole.isFurred = true;
         hole.visualElement.src = "";
         hole.visualElement.src = "Sprites/Dog/dog_fur_pile.gif";
         setTimeout(() =>
         {
-            if (hole.mole != null && hole.mole.isFurred)
+            if (hole.isFurred)
                 hole.visualElement.src = "Sprites/Dog/dog_fur_pile.png";
         }, 1400);
 
-        hole.slotElement.addEventListener("click", hole.mole.clearFurHandler = (e) =>
+        hole.slotElement.addEventListener("click", hole.clearFurHandler = (e) =>
         {
             e.stopPropagation();
-            hole.mole.isFurred = false;
-            hole.mole.refreshSprite();
-            hole.slotElement.removeEventListener("click", hole.mole.clearFurHandler);
-            if (hole.mole.type !== animalNames[currentTarget])
+            hole.isFurred = false;
+            if (hole.mole != null) hole.mole.refreshSprite();
+            hole.slotElement.removeEventListener("click", hole.clearFurHandler);
+            if (hole.mole != null && hole.mole.type !== animalNames[currentTarget])
             {
                 timeLeft = Math.max(0, timeLeft - 5);
                 showPenalty();
@@ -59,18 +59,9 @@ class Dog extends Mole
         });
     }
 
-    // cancel the fur timer and restore any furred holes when the dog leaves
+    // cancel the fur timer when the dog leaves; fur stays on holes until cleared by the player
     onDespawn()
     {
         clearTimeout(this.furTimer);
-        holes.forEach(h =>
-        {
-            if (h.mole != null && h.mole.isFurred)
-            {
-                h.mole.isFurred = false;
-                h.slotElement.removeEventListener("click", h.mole.clearFurHandler);
-                h.mole.refreshSprite();
-            }
-        });
     }
 }

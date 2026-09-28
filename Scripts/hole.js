@@ -11,6 +11,8 @@ class Hole extends ProcessTreeNode
         this.is_occupied = false;
         this.slotElement = null;
         this.visualElement = null;
+        this.isFurred = false;
+        this.clearFurHandler = null;
 
         if (slotElement != null)
         {
