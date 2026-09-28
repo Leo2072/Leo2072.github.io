@@ -51,6 +51,16 @@ var scoreElement = document.getElementById("score-display");
 var targetElement = document.getElementById("target-display");
 var timerElement = document.getElementById("timer-display");
 
+// briefly show a floating -5s indicator when the player is penalised
+function showPenalty()
+{
+    var el = document.createElement("div");
+    el.className = "penalty-text";
+    el.textContent = "-5s";
+    gameRootElement.appendChild(el);
+    setTimeout(() => el.remove(), 1000);
+}
+
 // Choose a mole target
 function pickTarget()
 {
@@ -117,6 +127,7 @@ for (let hole of holes)
         else
         {
             timeLeft = Math.max(0, timeLeft - 5);
+            showPenalty();
             hole.mole.onMiss();
         }
     });

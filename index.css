@@ -380,3 +380,22 @@ body
     font-size: 1.6em;
     font-weight: bold;
 }
+
+.penalty-text
+{
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    color: red;
+    font-size: 2em;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 10;
+    animation: penalty-float 1s ease-out forwards;
+}
+
+@keyframes penalty-float
+{
+    0%   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-40px); }
+}
