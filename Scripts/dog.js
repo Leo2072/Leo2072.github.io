@@ -22,7 +22,7 @@ class Dog extends Mole
         }, 4000 + Math.random() * 4000);
     }
 
-    // cover other occupied holes with fur
+    // swap other occupied holes' sprites to fur
     spreadFur()
     {
         if (this.state === MOLE_STATE_DESPAWNING) return;
@@ -30,34 +30,39 @@ class Dog extends Mole
         this.scheduleFur();
     }
 
-    // add a fur overlay to a hole; clicking it clears the fur and penalizes if wrong animal
+    // swap the hole's sprite to the fur pile; clicking it restores the animal and penalizes if wrong
     applyFur(hole)
     {
-        if (hole.slotElement.querySelector(".fur-overlay")) return;
-        var img = document.createElement("img");
-        img.className = "fur-overlay";
-        img.src = "Sprites/Dog/dog_fur_pile.png";
-        img.addEventListener("click", (e) =>
+        if (hole.mole == null || hole.mole.isFurred) return;
+        hole.mole.isFurred = true;
+        hole.visualElement.src = "Sprites/Dog/dog_fur_pile.png";
+
+        hole.slotElement.addEventListener("click", hole.mole.clearFurHandler = (e) =>
         {
             e.stopPropagation();
-            img.remove();
-            if (hole.mole != null && hole.mole.type !== animalNames[currentTarget])
+            hole.mole.isFurred = false;
+            hole.mole.refreshSprite();
+            hole.slotElement.removeEventListener("click", hole.mole.clearFurHandler);
+            if (hole.mole.type !== animalNames[currentTarget])
             {
                 timeLeft = Math.max(0, timeLeft - 5);
                 showPenalty();
             }
         });
-        hole.slotElement.appendChild(img);
     }
 
-    // cancel the fur timer and remove any existing fur when the dog leaves
+    // cancel the fur timer and restore any furred holes when the dog leaves
     onDespawn()
     {
         clearTimeout(this.furTimer);
         holes.forEach(h =>
         {
-            var fur = h.slotElement.querySelector(".fur-overlay");
-            if (fur) fur.remove();
+            if (h.mole != null && h.mole.isFurred)
+            {
+                h.mole.isFurred = false;
+                h.slotElement.removeEventListener("click", h.mole.clearFurHandler);
+                h.mole.refreshSprite();
+            }
         });
     }
 }

@@ -145,8 +145,7 @@
         justify-content: space-evenly;
         align-items: center;
 
-        /* Placeholder background. */
-        background-color: cadetblue;
+        background-color: goldenrod;
     }
 
     /* The class of divs showing which button must be pressed, the score, and the remaining amount of time. */
@@ -246,8 +245,7 @@
         justify-content: space-evenly;
         align-items: center;
         
-        /* Placeholder background. */
-        background-color: cadetblue;
+        background-color: goldenrod;
     }
 
     /* The class of divs showing which button must be pressed, the score, and the remaining amount of time. */
@@ -327,16 +325,6 @@
     image-rendering: pixelated;
 }
 
-.fur-overlay
-{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    image-rendering: pixelated;
-    cursor: pointer;
-    z-index: 1;
-}
-
 
 
 body
@@ -345,12 +333,11 @@ body
     /* Prevent auto-scrolling */
     overscroll-behavior-y: none;
 
-    /* Placeholder background. */
-    background-color: #d3afd4;
+    background-color: rgba(255, 228, 91, 1);
     /* The leftmost background is rendered on top. */
     background-image: var(--game-background), url("Sprites/penguin_title_icon.png"); /* mwehehe */
     
-    background-repeat: no-repeat, repeat;
+    background-repeat: no-repeat, no-repeat;
 
     /* Position the background different depending on whether the game is in horizontal or vertical layout. */
     @media (orientation: landscape) and (min-width: 800px)
@@ -370,7 +357,7 @@ body
 #timer-display
 {
     padding: 10px;
-    font-size: 1.2em;
+    font-size: clamp(1.2em, 3vw, 4em);
     font-weight: bold;
 }
 
@@ -381,18 +368,28 @@ body
 
 #target-display
 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     padding: 10px;
-    font-size: 1.6em;
+    font-size: clamp(1.5em, 4vw, 6em);
     font-weight: bold;
+}
+
+#target-icon
+{
+    height: 1.5em;
+    width: 1.5em;
+    image-rendering: pixelated;
 }
 
 .penalty-text
 {
-    position: absolute;
-    top: 10%;
-    left: 50%;
+    position: fixed;
+    top: 10vh;
+    left: 50vw;
     color: red;
-    font-size: 2em;
+    font-size: clamp(1.5em, 4vw, 6em);
     font-weight: bold;
     pointer-events: none;
     z-index: 10;
@@ -402,5 +399,5 @@ body
 @keyframes penalty-float
 {
     0%   { opacity: 1; transform: translateX(-50%) translateY(0); }
-    100% { opacity: 0; transform: translateX(-50%) translateY(-40px); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-5vh); }
 }

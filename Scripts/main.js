@@ -49,7 +49,14 @@ function spawnMole(hole)
 
 var scoreElement = document.getElementById("score-display");
 var targetElement = document.getElementById("target-display");
+var targetIconElement = document.getElementById("target-icon");
 var timerElement = document.getElementById("timer-display");
+
+var animalIcons = {
+    "penguin": "Sprites/penguin_title_icon.png",
+    "raccoon": "Sprites/raccoon_title_icon.png",
+    "dog":     "Sprites/Dog/dog_idle.png"
+};
 
 // briefly show a floating -5s indicator and flash the timer red when the player is penalized
 function showPenalty()
@@ -57,7 +64,7 @@ function showPenalty()
     var el = document.createElement("div");
     el.className = "penalty-text";
     el.textContent = "-5s";
-    gameRootElement.appendChild(el);
+    document.body.appendChild(el);
 
     timerElement.classList.add("timer-penalty");
     setTimeout(() => timerElement.classList.remove("timer-penalty"), 300);
@@ -75,7 +82,8 @@ function pickTarget()
 
     var chosenType = randomItemFromArray(pool);
     currentTarget = animalNames.indexOf(chosenType);
-    targetElement.textContent = "Click: " + animalNames[currentTarget];
+    targetIconElement.src = animalIcons[animalNames[currentTarget]];
+    targetIconElement.style.display = "inline";
 }
 
 // Despawn all moles and create new ones
@@ -163,6 +171,7 @@ setInterval(() =>
     }
     else
     {
-        targetElement.textContent = "Game over!";
+        document.getElementById("target-label").textContent = "Game over!";
+        targetIconElement.style.display = "none";
     }
 }, 100);
