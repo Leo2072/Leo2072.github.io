@@ -14,7 +14,7 @@ class Penguin extends Mole
 
     onLinger(lingerTime)
     {
-        if (!this.isAsleep && lingerTime >= 5.0)
+        if (!this.isAsleep && lingerTime >= 3.0)
         {
             this.sleep();
         }
@@ -44,6 +44,17 @@ class Penguin extends Mole
         this.playSprite("idle");
         setDarkness(gameRootElement, 0);
         targetElement.style.visibility = "visible";
+    }
+
+    refreshSprite()
+    {
+        if (this.isAsleep)
+        {
+            if (this.hole != null && this.hole.visualElement != null)
+                this.hole.visualElement.src = "Sprites/Penguin/penguin_action.png";
+            return;
+        }
+        super.refreshSprite();
     }
 
     onHit()

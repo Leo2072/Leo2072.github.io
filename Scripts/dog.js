@@ -19,7 +19,7 @@ class Dog extends Mole
             if (this.state === MOLE_STATE_DESPAWNING) return;
             this.hole.visualElement.src = "";
             this.hole.visualElement.src = "Sprites/Dog/dog_action.gif";
-            this.furTimer = setTimeout(() => this.spreadFur(), 3650);
+            this.furTimer = setTimeout(() => this.spreadFur(), GIF_DURATIONS_MS.dog_action * 0.6625);
         }, 4000 + Math.random() * 4000);
     }
 
