@@ -18,12 +18,8 @@ class Raccoon extends Mole
         if (candidates.length === 0) return;
         var toHole = randomItemFromArray(candidates);
 
-        // if visible, play the action gif as a warning; if furred, swap silently so the player doesn't notice
-        if (!fromHole.isFurred)
-        {
-            fromHole.visualElement.src = "";
-            fromHole.visualElement.src = "Sprites/Raccoon/raccoon_action.gif";
-        }
+        // play the action gif as a warning (hidden if he's under fur, so the swap is silent)
+        fromHole.visualElement.src = "Sprites/Raccoon/raccoon_action.gif";
         this.swapTimer = setTimeout(() =>
         {
             fromHole.swapWith(toHole);

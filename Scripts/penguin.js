@@ -23,12 +23,11 @@ class Penguin extends Mole
     sleep()
     {
         this.isAsleep = true;
-        this.hole.visualElement.src = "";
         this.hole.visualElement.src = "Sprites/Penguin/penguin_action.gif";
         this.sleepFreezeTimer = setTimeout(() =>
         {
             if (!this.isAsleep) return;
-            if (this.hole != null && this.hole.visualElement != null && !this.hole.isFurred)
+            if (this.hole != null && this.hole.visualElement != null)
                 this.hole.visualElement.src = "Sprites/Penguin/penguin_action.png";
             setDarkness(gameRootElement, 1);
             targetElement.style.visibility = "hidden";
@@ -40,8 +39,7 @@ class Penguin extends Mole
         this.isAsleep = false;
         this.lingerTime = 0.0;
         clearTimeout(this.sleepFreezeTimer);
-        clearTimeout(this.resetTimer);
-        this.playSprite("idle");
+        this.playAnimation("wake");
         setDarkness(gameRootElement, 0);
         targetElement.style.visibility = "visible";
     }
@@ -50,7 +48,7 @@ class Penguin extends Mole
     {
         if (this.isAsleep)
         {
-            if (this.hole != null && this.hole.visualElement != null && !this.hole.isFurred)
+            if (this.hole != null && this.hole.visualElement != null)
                 this.hole.visualElement.src = "Sprites/Penguin/penguin_action.png";
             return;
         }

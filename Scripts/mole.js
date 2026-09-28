@@ -8,6 +8,7 @@ var GIF_DURATIONS_MS = {
     penguin_action:     4550,
     penguin_correct:    1250,
     penguin_incorrect:  3150,
+    penguin_wake:       1400,
     raccoon_action:     3800,
     raccoon_correct:    1250,
     raccoon_incorrect:  2450,
@@ -127,7 +128,6 @@ class Mole extends ProcessTreeNode
     {
         this.currentSpriteState = state;
         if (this.hole == null || this.hole.visualElement == null) return;
-        if (this.hole.isFurred) return;
         var ext = state == "idle" ? "png" : "gif";
         this.hole.visualElement.src = spriteBasePathFor(this.type) + "_" + state + "." + ext;
     }

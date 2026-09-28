@@ -17,13 +17,12 @@ class Dog extends Mole
         this.furTimer = setTimeout(() =>
         {
             if (this.state === MOLE_STATE_DESPAWNING) return;
-            this.hole.visualElement.src = "";
             this.hole.visualElement.src = "Sprites/Dog/dog_action.gif";
             this.furTimer = setTimeout(() => this.spreadFur(), GIF_DURATIONS_MS.dog_action * 0.6625);
         }, 4000 + Math.random() * 4000);
     }
 
-    // swap other occupied holes' sprites to fur
+    // cover the other occupied holes with fur
     spreadFur()
     {
         if (this.state === MOLE_STATE_DESPAWNING) return;
@@ -32,24 +31,23 @@ class Dog extends Mole
         this.scheduleFur();
     }
 
-    // swap the hole's sprite to the fur pile; clicking it just uncovers the animal (no penalty, only wastes a click)
+    // show the fur pile and hide the animal; the animal keeps doing its thing underneath
+    // clicking it just uncovers the animal (no penalty, only wastes a click)
     applyFur(hole)
     {
         if (hole.mole == null || hole.isFurred) return;
+        var fur = hole.slotElement.querySelector(".fur-pile");
         hole.isFurred = true;
-        hole.visualElement.src = "";
-        hole.visualElement.src = "Sprites/Dog/dog_fur_pile.gif";
-        setTimeout(() =>
-        {
-            if (hole.isFurred)
-                hole.visualElement.src = "Sprites/Dog/dog_fur_pile.png";
-        }, 1400);
+        fur.src = "Sprites/Dog/dog_fur_pile.gif";
+        fur.hidden = false;
+        hole.visualElement.style.visibility = "hidden";
+        setTimeout(() => fur.src = "Sprites/Dog/dog_fur_pile.png", 1000);
 
-        hole.slotElement.addEventListener("click", hole.clearFurHandler = (e) =>
+        hole.slotElement.addEventListener("click", hole.clearFurHandler = () =>
         {
-            e.stopPropagation();
             hole.isFurred = false;
-            if (hole.mole != null) hole.mole.refreshSprite();
+            fur.hidden = true;
+            hole.visualElement.style.visibility = "";
             hole.slotElement.removeEventListener("click", hole.clearFurHandler);
         });
     }

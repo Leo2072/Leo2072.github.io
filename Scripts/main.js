@@ -8,6 +8,16 @@ new Hole(2, processTreeRoot, document.getElementsByClassName("game-slot")[2]);
 
 var gameRootElement = document.getElementsByClassName("game-bound")[0];
 
+// load every gif up front so there's no blank gap the first time one plays
+var preloadedGifs = Object.keys(GIF_DURATIONS_MS).concat("dog_fur_pile").map((name) =>
+{
+    var type = name.split("_")[0];
+    var img = new Image();
+    img.src = spriteBasePathFor(type) + name.substring(type.length) + ".gif";
+    return img;
+});
+new Image().src = "Sprites/Dog/dog_fur_pile.png";
+
 setDarkness(gameRootElement, 0);
 
 
@@ -169,18 +179,11 @@ function endGame()
 
     for (let hole of holes)
     {
-        if (hole.isFurred)
-            hole.visualElement.src = "Sprites/Dog/dog_fur_pile.png";
-
-        var mole = hole.mole;
-        if (mole == null) continue;
-
-        clearTimeout(mole.resetTimer);
-        mole.onDespawn();
-        mole.playSprite("idle");
+        if (hole.mole == null) continue;
+        hole.mole.onDespawn();
+        hole.mole.playSprite("idle");
     }
 
-    timerElement.textContent = "Time: 0";
     document.getElementById("target-label").textContent = "Game over!";
     targetIconElement.style.display = "none";
 }
@@ -192,7 +195,6 @@ var gameTimer = setInterval(() =>
 
     if (timeLeft <= 0)
     {
-        timeLeft = 0;
         clearInterval(gameTimer);
         endGame();
     }
