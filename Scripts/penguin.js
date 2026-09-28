@@ -25,6 +25,7 @@ class Penguin extends Mole
     {
         this.isAsleep = true;
         this.sleepStartTime = Date.now();
+        clearTimeout(this.resetTimer); // so a leftover animation doesn't snap him back to idle mid-sleep
         this.hole.visualElement.src = "Sprites/Penguin/penguin_action.gif";
         this.sleepFreezeTimer = setTimeout(() =>
         {

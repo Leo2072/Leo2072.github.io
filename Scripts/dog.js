@@ -17,6 +17,7 @@ class Dog extends Mole
         this.furTimer = setTimeout(() =>
         {
             if (this.state === MOLE_STATE_DESPAWNING) return;
+            clearTimeout(this.resetTimer); // so a leftover animation doesn't cut the sneeze short
             this.hole.visualElement.src = "Sprites/Dog/dog_action.gif";
             this.furTimer = setTimeout(() => this.spreadFur(), GIF_DURATIONS_MS.dog_action * 0.6625);
         }, 4000 + Math.random() * 4000);

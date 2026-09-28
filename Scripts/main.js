@@ -27,7 +27,6 @@ var timeLeft = 60;
 var currentTarget = 0;
 
 var animalNames = ["penguin", "raccoon", "dog"];
-var raccoonSlot = 1;
 
 var moleClasses =
 {
@@ -53,13 +52,14 @@ function spawnMole(hole)
 
 var scoreElement = document.getElementById("score-display");
 var targetElement = document.getElementById("target-display");
+var targetLabelElement = document.getElementById("target-label");
 var targetIconElement = document.getElementById("target-icon");
 var timerElement = document.getElementById("timer-display");
 
 var animalIcons = {
     "penguin": "Sprites/penguin_title_icon.png",
     "raccoon": "Sprites/raccoon_title_icon.png",
-    "dog":     "Sprites/Dog/dog_idle.png"
+    "dog":     "Sprites/dog_title_icon.png"
 };
 
 // briefly show a floating -5s indicator and flash the timer red when the player is penalized
@@ -86,6 +86,7 @@ function pickTarget()
 
     var chosenType = randomItemFromArray(pool);
     currentTarget = animalNames.indexOf(chosenType);
+    targetLabelElement.textContent = "Click: " + chosenType.charAt(0).toUpperCase() + chosenType.slice(1);
     targetIconElement.src = animalIcons[animalNames[currentTarget]];
     targetIconElement.style.display = "inline";
 
@@ -135,7 +136,7 @@ for (let hole of holes)
 
     hole.slotElement.addEventListener("click", () =>
     {
-        if (timeLeft <= 0 || hole.mole == null) return;
+        if (timeLeft <= 0 || hole.mole == null || hole.mole.state == MOLE_STATE_DESPAWNING) return;
         if (hole.isFurred) return;
 
         // sleeping penguin wakes on any click with no penalty
@@ -184,7 +185,7 @@ function endGame()
         hole.mole.playSprite("idle");
     }
 
-    document.getElementById("target-label").textContent = "Game over!";
+    targetLabelElement.textContent = "Game over!";
     targetIconElement.style.display = "none";
 }
 
