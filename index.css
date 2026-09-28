@@ -124,6 +124,7 @@
     {
         position:relative;
         cursor: pointer;
+        overflow: hidden;
 
         height: 100%;
         aspect-ratio: var(--game-slot-aspect-ratio);
@@ -226,6 +227,7 @@
     {
         position:relative;
         cursor: pointer;
+        overflow: hidden;
         width: 100%;
         aspect-ratio: var(--game-slot-aspect-ratio);
 
