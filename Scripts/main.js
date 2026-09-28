@@ -8,13 +8,7 @@ new Hole(2, processTreeRoot, document.getElementsByClassName("game-slot")[2]);
 
 var gameRootElement = document.getElementsByClassName("game-bound")[0];
 
-var timeVal = 0;
-setInterval(() =>
-{
-    timeVal += 0.06;
-    var darknessValue = 0.5 + Math.sin(timeVal) * 0.5;
-    setDarkness(gameRootElement, darknessValue);
-}, 60);
+setDarkness(gameRootElement, 0);
 
 
 // Game state
@@ -84,6 +78,11 @@ function pickTarget()
     currentTarget = animalNames.indexOf(chosenType);
     targetIconElement.src = animalIcons[animalNames[currentTarget]];
     targetIconElement.style.display = "inline";
+
+    // pulse the target display to signal a new target
+    targetElement.classList.remove("target-changed");
+    void targetElement.offsetWidth;
+    targetElement.classList.add("target-changed");
 }
 
 // Despawn all moles and create new ones
@@ -118,6 +117,12 @@ function resetAllMoles()
 
 for (let hole of holes)
 {
+    hole.slotElement.addEventListener("mouseenter", () =>
+    {
+        if (timeLeft <= 0 || hole.mole == null) return;
+        hole.mole.onHover();
+    });
+
     hole.slotElement.addEventListener("click", () =>
     {
         if (timeLeft <= 0 || hole.mole == null) return;
@@ -148,19 +153,6 @@ for (let hole of holes)
 
 pickTarget();
 
-function scheduleRaccoonWarn()
-{
-    setTimeout(() =>
-    {
-        if (timeLeft > 0)
-        {
-            showSprite(raccoonSlot, "action_warn", "png", 2500);
-        }
-        scheduleRaccoonWarn();
-    }, 5000 + Math.random() * 5000);
-}
-
-scheduleRaccoonWarn();
 
 setInterval(() =>
 {

@@ -9,9 +9,9 @@ var GIF_DURATIONS_MS = {
     penguin_correct:    1250,
     penguin_incorrect:  3150,
     raccoon_action:     3800,
-    raccoon_correct:    1000,
+    raccoon_correct:    1250,
     raccoon_incorrect:  2450,
-    dog_action:         1000,
+    dog_action:         3650,
     dog_correct:        1950,
     dog_incorrect:      1950,
 };

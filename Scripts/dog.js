@@ -17,8 +17,9 @@ class Dog extends Mole
         this.furTimer = setTimeout(() =>
         {
             if (this.state === MOLE_STATE_DESPAWNING) return;
-            this.playSprite("action_warn");
-            this.furTimer = setTimeout(() => this.spreadFur(), 1500);
+            this.hole.visualElement.src = "";
+            this.hole.visualElement.src = "Sprites/Dog/dog_action.gif";
+            this.furTimer = setTimeout(() => this.spreadFur(), 3650);
         }, 4000 + Math.random() * 4000);
     }
 
@@ -26,6 +27,7 @@ class Dog extends Mole
     spreadFur()
     {
         if (this.state === MOLE_STATE_DESPAWNING) return;
+        this.playSprite("idle");
         holes.filter(h => h !== this.hole && h.mole != null).forEach(h => this.applyFur(h));
         this.scheduleFur();
     }
