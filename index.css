@@ -133,8 +133,8 @@
         background-color: goldenrod;
     }
 
-    /* The class of divs containing the game-slot divs. */
-    .slot-container
+    /* The div containing the game-slot divs. */
+    #slot-container
     {
         display: flex;
 
@@ -149,8 +149,8 @@
         background-color: cadetblue;
     }
 
-    /* The class of divs showing which button must be pressed, the score, and the remaining amount of time. */
-    .instruction-container
+    /* The div showing which button must be pressed, the score, and the remaining amount of time. */
+    #instruction-container
     {
         display: flex;
         width: 100%;
@@ -164,8 +164,8 @@
         background-color: aquamarine;
     }
 
-    /* The class of divs containing the game items, maintaining an appropriate aspect ratio. */
-    .game-bound
+    /* The div containing the game items, maintaining an appropriate aspect ratio. */
+    #game-bound
     {
         display: flex;
         box-sizing: border-box; 
@@ -225,7 +225,7 @@
 {
     .game-slot
     {
-        position:relative;
+        position: relative;
         cursor: pointer;
         overflow: hidden;
         width: 100%;
@@ -235,8 +235,8 @@
         background-color: goldenrod;
     }
 
-    /* The class of divs containing the game-slot divs. */
-    .slot-container
+    /* The div containing the game-slot divs. */
+    #slot-container
     {
         display: flex;
         width: 67%; /* Six-seven... */
@@ -250,8 +250,8 @@
         background-color: cadetblue;
     }
 
-    /* The class of divs showing which button must be pressed, the score, and the remaining amount of time. */
-    .instruction-container
+    /* The div showing which button must be pressed, the score, and the remaining amount of time. */
+    #instruction-container
     {
         display: flex;
         width: 25%;
@@ -261,12 +261,14 @@
         justify-content: space-between;
         align-items: start;
         
+        filter: var(--game-darkness-filter);
+        
         /* Placeholder background. */
         background-color: aquamarine;
     }
 
-    /* The class of divs containing the game items, maintaining an appropriate aspect ratio. */
-    .game-bound
+    /* The div containing the game items, maintaining an appropriate aspect ratio. */
+    #game-bound
     {
         display: flex;
         box-sizing: border-box;
@@ -356,17 +358,65 @@ body
 }
 
 
-#score-display,
+#score-display
+{
+    padding: 10px;
+    font-size: 3vw;
+    font-weight: bold;
+    --norm-fill: 0.0;
+
+    filter: var(--game-darkness-filter);
+}
+
 #timer-display
 {
     padding: 10px;
-    font-size: 1.2em;
-    font-weight: bold;
+    --norm-fill: 0.0;
+
+    @media (orientation: landscape) and (min-width: 800px)
+    {
+        width: auto;
+    }
+
+    @media (orientation: portrait), not (min-width: 800px)
+    {
+        height: auto;
+    }
+
+    filter: var(--game-darkness-filter);
+}
+#timer-display-fill
+{
+    @media (orientation: landscape) and (min-width: 800px)
+    {
+        width: calc(var(--norm-fill) * 100%);
+        height: auto;
+    }
+
+    @media (orientation: portrait), not (min-width: 800px)
+    {
+        height: calc(var(--norm-fill) * 100%);
+        width: auto;
+    }
+
+    filter: var(--game-darkness-filter);
 }
 
 #target-display
 {
     padding: 10px;
-    font-size: 1.6em;
-    font-weight: bold;
+
+    @media (orientation: landscape) and (min-width: 800px)
+    {
+        height: auto;
+        aspect-ratio: 1;
+    }
+
+    @media (orientation: portrait), not (min-width: 800px)
+    {
+        width: auto;
+        aspect-ratio: 1;
+    }
+
+    filter: var(--game-darkness-filter);
 }

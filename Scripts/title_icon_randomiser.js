@@ -1,4 +1,9 @@
-var TITLE_ICON_SOURCES = ["Sprites/raccoon_title_icon.png", "Sprites/penguin_title_icon.png"];
+var TITLE_ICON_SOURCES = [
+    "Sprites/unknown_title_icon.png",
+    "Sprites/raccoon_title_icon.png",
+    "Sprites/penguin_title_icon.png",
+    "Sprites/dog_title_icon.png"
+];
 
 
 // Get the title icon element.

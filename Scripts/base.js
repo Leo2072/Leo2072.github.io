@@ -53,7 +53,7 @@ class ProcessTreeNode
             {
                 var removedChild = this.children[childIndex];
                 this.children.splice(childIndex, 1);
-                removedChild.queue_delete();
+                removedChild.queueDelete();
             }
             else
             {
@@ -88,7 +88,7 @@ class ProcessTreeNode
 
             for (var i = 0; i < currentChildren.length; ++i)
             {
-                currentChildren[i].queue_delete();
+                currentChildren[i].queueDelete();
             }
         }
         this.children = [];
@@ -133,7 +133,7 @@ class ProcessTreeNode
         }
     }
 
-    queue_delete()
+    queueDelete()
     {
         this.isQueuedForDeletion = true;
         processNodeDeletionQueue.push(this);
@@ -142,7 +142,7 @@ class ProcessTreeNode
 
         for (var i = 0; i < currentChildren.length; ++i)
         {
-            currentChildren[i].queue_delete();
+            currentChildren[i].queueDelete();
         }
     }
 }

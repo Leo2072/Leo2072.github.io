@@ -1,139 +1,290 @@
 randomiseTitleIcon()
 
-startPerFrameProcessLoop();
 
-new Hole(0, processTreeRoot, document.getElementsByClassName("game-slot")[0]);
-new Hole(1, processTreeRoot, document.getElementsByClassName("game-slot")[1]);
-new Hole(2, processTreeRoot, document.getElementsByClassName("game-slot")[2]);
-
-var gameRootElement = document.getElementsByClassName("game-bound")[0];
-
-var timeVal = 0;
-setInterval(() =>
+// Return a shuffled copy of the given array.
+function shuffleArray(arr)
 {
-    timeVal += 0.06;
-    var darknessValue = 0.5 + Math.sin(timeVal) * 0.5;
-    setDarkness(gameRootElement, darknessValue);
-}, 60);
+    // Create a copy of the original.
+    var shuffledArray = arr.slice();
 
-
-// Game state
-var score = 0;
-var timeLeft = 30;
-var currentTarget = 0;
-
-var animalNames = ["penguin", "raccoon", "dog"];
-
-var moleClasses =
-{
-    penguin: Penguin,
-    raccoon: Raccoon,
-    dog: Dog
-};
-
-function spawnMole(hole)
-{
-    // Avoid spawning a type that's already active (and not itself despawning) in another hole.
-    var usedTypes = holes
-        .filter((h) => h !== hole && h.mole != null && h.mole.state !== MOLE_STATE_DESPAWNING)
-        .map((h) => h.mole.type);
-    var availableTypes = animalNames.filter((name) => !usedTypes.includes(name));
-    var pool = availableTypes.length > 0 ? availableTypes : animalNames;
-
-    var type = randomItemFromArray(pool);
-    var mole = new moleClasses[type](processTreeRoot);
-    mole.onExit = (exitedHole) => spawnMole(exitedHole);
-    mole.spawn(hole);
-}
-
-var scoreElement = document.getElementById("score-display");
-var targetElement = document.getElementById("target-display");
-var timerElement = document.getElementById("timer-display");
-
-// Choose a mole target
-function pickTarget()
-{
-    var presentTypes = holes
-        .filter((hole) => hole.mole != null && hole.mole.state !== MOLE_STATE_DESPAWNING)
-        .map((hole) => hole.mole.type);
-
-    var pool = presentTypes.length > 0 ? [...new Set(presentTypes)] : animalNames;
-
-    var chosenType = randomItemFromArray(pool);
-    currentTarget = animalNames.indexOf(chosenType);
-    targetElement.textContent = "Click: " + animalNames[currentTarget];
-}
-
-// Despawn all moles and create new ones
-function resetAllMoles()
-{
-    var occupiedHoles = holes.filter((hole) => hole.mole != null);
-
-    if (occupiedHoles.length == 0)
+    // Iterate from the end of the array to the start of it, swapping each element with another random element.
+    for (var i = shuffledArray.length - 1; i > 0; --i)
     {
-        pickTarget();
-        return;
+        // Get a random item to swap with.
+        // Math.random() generates numbers within the range [0, 1).
+        var swapTo = Math.floor(Math.random() * (i + 1));
+
+        // Swap the 2 items.
+        var temp = shuffledArray[i];
+        shuffledArray[i] = shuffledArray[swapTo];
+        shuffledArray[swapTo] = temp;
+    }
+    return shuffledArray;
+}
+
+
+
+// Different turn transition states.
+var TURN_TRANSITION_NONE = 0; // No turn transitions are happening.
+var TURN_TRANSITION_END = 1; // The moles are returning into their holes.
+var TURN_TRANSITION_START = 2; // The moles are moving out of their holes.
+
+var MAX_TURN_TIME = 5;
+var MIN_TURN_TIME = 1;
+var TURN_TIME_DECAY_FACTOR = 1.25;
+
+var UNKNOWN_TARGET_SPRITE_SRC = "Sprites/unknown_title_icon.png";
+
+
+/* Set up game. */
+class GameController extends ProcessTreeNode
+{
+    constructor()
+    {
+        super();
+
+        this.rootElement = document.getElementById("game-bound");
+        this.scoreElement = document.getElementById("score-display");
+        this.targetElement = document.getElementById("target-display");
+        this.timerElement = document.getElementById("timer-display");
+
+        this.gameSlots = [];
+        for (var slot of document.getElementsByClassName("animal-button"))
+        {
+            this.gameSlots.push(slot);
+        }
+        this.moles = [];
+
+        // Flag to check if the game is over.
+        this.gameOver = false;
+
+        // Flag to check if the game is in a transition between turns.
+        this.turnTransition = TURN_TRANSITION_NONE;
+
+        // General purpose timer.
+        this.timer = 0;
+
+        // Current game score.
+        this.score = 0;
+        // The total amount of time for this turn of the game.
+        this.turnDuration = 0;
+
+        // Current number of turn of the game.
+        this.turn = 0;
     }
 
-    var pendingCount = occupiedHoles.length;
-
-    for (let hole of occupiedHoles)
+    // Check if there is currently a turn going on.
+    isInTurn()
     {
-        let originalOnExit = hole.mole.onExit;
-        hole.mole.onExit = (exitedHole) =>
-        {
-            if (originalOnExit) originalOnExit(exitedHole);
-
-            pendingCount--;
-            if (pendingCount == 0)
-            {
-                pickTarget();
-            }
-        };
-        hole.mole.despawn();
+        return (!this.gameOver && (this.turnTransition == TURN_TRANSITION_NONE));
     }
-}
 
-for (let hole of holes)
-{
-    hole.slotElement.addEventListener("click", () =>
+    getTurnTime()
     {
-        if (timeLeft <= 0 || hole.mole == null) return;
+        return MIN_TURN_TIME + (MAX_TURN_TIME - MIN_TURN_TIME) * Math.pow(TURN_TIME_DECAY_FACTOR, 1 - this.turn);
+    }
 
-        if (hole.mole.type == animalNames[currentTarget])
+
+    // Convert a duration relative to the turn duration into an actual time in seconds.
+    getActualDuration(turnRelativeTime)
+    {
+        return turnRelativeTime * this.turnDuration;
+    }
+
+    getTurnScore()
+    {
+        // Gain anywhere from 50 to 150 points based on how much time has elapsed this turn.
+        return (50 + 100 * (1 - (this.timer / this.turnDuration)));
+    }
+
+    // Set up the moles. Return true if successful.
+    setUpMoles()
+    {
+        var randomisedSlots = shuffleArray(this.gameSlots);
+        if (randomisedSlots.length != 3)
         {
-            var hitMole = hole.mole;
-            hitMole.onHit();
+            console.log("Project needs exactly 3 buttons, but has a different number");
+            return false;
+        }
 
-            // Only increase score if the mole is in a despawning state
-            if (hitMole.state == MOLE_STATE_DESPAWNING)
+        // Assign each mole to a random slot.
+        this.moles = [
+            new Dog(0, this, randomisedSlots[0]),
+            new Penguin(1, this, randomisedSlots[1]),
+            new Raccoon(2, this, randomisedSlots[2]),
+        ];
+        return true;
+    }
+
+
+    // Start the game.
+    startGame()
+    {
+        this.scoreElement.textContent = "Score: " + Math.floor(this.score);
+        this.targetElement.src = UNKNOWN_TARGET_SPRITE_SRC;
+
+        this.timer = 0;
+        this.turnTransition = TURN_TRANSITION_END;
+    }
+
+
+    // Start end of turn processing.
+    nextTurn()
+    {
+        // Update score.
+        this.score += this.getTurnScore();
+        this.scoreElement.textContent = "Score: " + Math.floor(this.score);
+
+        // Callback for the moles.
+        for (var mole of this.moles)
+        {
+            mole.onTurnEnd();
+        }
+
+        this.timer = 0;
+        this.turnTransition = TURN_TRANSITION_END;
+    }
+
+
+    tick(delta)
+    {
+        super.tick(delta);
+
+        if (!this.gameOver)
+        {
+            switch (this.turnTransition)
             {
-                score++;
-                scoreElement.textContent = "Score: " + score;
-                resetAllMoles();
+                case TURN_TRANSITION_NONE:
+                    {
+                        this.timer += delta;
+                        if (this.timer >= this.turnDuration)
+                        {
+                            this.timerElement.style.setProperty("--norm-fill", "0");
+                            this.timer = this.turnDuration;
+                            this.gameOver = true;
+
+                            // Display game over.
+                            {
+                                console.log("Game Over");
+                            }
+                        }
+                        else
+                        {
+                            this.timerElement.style.setProperty("--norm-fill", (1 - this.timer / this.turnDuration).toString());
+                        }
+                    }
+                    break;
+
+                case TURN_TRANSITION_END:
+                    {
+                        // Only proceed with ending the turn if no moles are busy.
+                        var busy = false;
+                        for (var mole of this.moles)
+                        {
+                            if (mole.isBusy())
+                            {
+                                busy = true;
+                                break;
+                            }
+                        }
+                        if (!busy)
+                        {
+                            this.timer += delta;
+                            if (this.timer >= this.getActualDuration(MOLE_RELATIVE_MOVE_TIME))
+                            {
+                                // Begin start of turn set up.
+                                {
+                                    // Move all moles into the hole.
+                                    for (var mole of this.moles)
+                                    {
+                                        mole.setOutAmount(0);
+                                    }
+
+                                    // Randomise which mole is in which hole.
+                                    var randomisedSlots = shuffleArray(this.gameSlots);
+                                    for (var i = 0; i < this.moles.length; ++i)
+                                    {
+                                        this.moles[i].setHole(randomisedSlots[i], false);
+                                    }
+
+                                    // Increment turn counter.
+                                    this.turn += 1;
+
+                                    // Calculate the amount of time to have for the new turn.
+                                    this.turnDuration = this.getTurnTime();
+
+                                    this.targetElement.src = UNKNOWN_TARGET_SPRITE_SRC;
+                                }
+                                this.timer = 0;
+                                this.turnTransition = TURN_TRANSITION_START;
+                            }
+                            else
+                            {
+                                for (var mole of this.moles)
+                                {
+                                    // Move the mole back into the hole based on transition time.
+                                    mole.setOutAmount(1 - (this.timer / this.getActualDuration(MOLE_RELATIVE_MOVE_TIME)));
+                                }
+                            }
+                        }
+                    }
+                    break;
+
+                case TURN_TRANSITION_START:
+                    {
+                        this.timer += delta;
+                        if (this.timer >= this.getActualDuration(MOLE_RELATIVE_MOVE_TIME))
+                        {
+                            // Finalise the start of turn setup.
+                            {
+                                // Move all moles out of the hole.
+                                for (var mole of this.moles)
+                                {
+                                    mole.setOutAmount(1);
+                                }
+
+                                // Assign a random mole to click on and set the rest as incorrect.
+                                for (var mole of this.moles)
+                                {
+                                    mole.isCorrect = false;
+                                }
+                                var targetMole = randomItemFromArray(this.moles);
+                                targetMole.isCorrect = true;
+
+                                this.targetElement.src = targetMole.getTargetSpriteSrc();
+
+                                // Callback for the moles.
+                                for (var mole of this.moles)
+                                {
+                                    mole.onTurnStart();
+                                }
+                            }
+                            this.timer = 0;
+                            this.turnTransition = TURN_TRANSITION_NONE;
+                        }
+                        else
+                        {
+                            for (var mole of this.moles)
+                            {
+                                // Move the mole out of the hole based on transition time.
+                                mole.setOutAmount(this.timer / this.getActualDuration(MOLE_RELATIVE_MOVE_TIME));
+                            }
+                            // Refill the timer bar.
+                            var fill = parseFloat(this.timerElement.style.getPropertyValue("--norm-fill"));
+                            this.timerElement.style.setProperty("--norm-fill", (fill + (1 - fill) * (this.timer / this.getActualDuration(MOLE_RELATIVE_MOVE_TIME))).toString());
+                        }
+                    }
+                    break;
             }
         }
-        else
-        {
-            timeLeft = Math.max(0, timeLeft - 5);
-            hole.mole.onMiss();
-        }
-    });
-
-    spawnMole(hole);
+    }
 }
 
-pickTarget();
 
-setInterval(() =>
-{
-    if (timeLeft > 0)
-    {
-        timeLeft -= 0.1;
-        timerElement.textContent = "Time: " + Math.ceil(timeLeft);
-    }
-    else
-    {
-        targetElement.textContent = "Game over!";
-    }
-}, 100);
+var gameController = new GameController();
+gameController.setUpMoles();
+processTreeRoot = gameController;
+
+// Start Game.
+gameController.startGame();
+window.addEventListener('load', startPerFrameProcessLoop);

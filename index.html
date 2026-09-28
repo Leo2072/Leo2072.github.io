@@ -11,7 +11,6 @@
     <!-- Include all of the (Function and Class Definitions ONLY) script modules here. -->
     <script src="Scripts/base.js" defer></script>
     <script src="Scripts/title_icon_randomiser.js" defer></script>
-    <script src="Scripts/hole.js" defer></script>
     <script src="Scripts/mole.js" defer></script>
     <script src="Scripts/dog.js" defer></script>
     <script src="Scripts/penguin.js" defer></script>
@@ -22,13 +21,15 @@
 </head>
 
 <body>
-    <div class="game-bound">
-        <div class="instruction-container">
+    <div id="game-bound">
+        <div id="instruction-container">
             <div id="score-display">Score: 0</div>
-            <div id="target-display">Click: ?</div>
-            <div id="timer-display">Time: 30</div>
+            <img id="target-display" src="Sprites/unknown_title_icon.png"/>
+            <div id="timer-display">
+                <div id="timer-display-fill"></div>
+            </div>
         </div>
-        <div class="slot-container">
+        <div id="slot-container">
             <div class="game-slot">
                 <img class="animal-button" src="Sprites/Penguin/penguin_idle.png" />
             </div>
@@ -36,7 +37,7 @@
                 <img class="animal-button" src="Sprites/Raccoon/raccoon_idle.png" />
             </div>
             <div class="game-slot">
-                <img class="animal-button" />
+                <img class="animal-button" src="Sprites/Dog/dog_idle.png"/>
             </div>
         </div>
     </div>
