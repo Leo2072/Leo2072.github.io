@@ -10,6 +10,7 @@ class Penguin extends Mole
         super("penguin", parent);
         this.isAsleep = false;
         this.sleepFreezeTimer = null;
+        this.sleepStartTime = 0;
     }
 
     onLinger(lingerTime)
@@ -23,6 +24,7 @@ class Penguin extends Mole
     sleep()
     {
         this.isAsleep = true;
+        this.sleepStartTime = Date.now();
         this.hole.visualElement.src = "Sprites/Penguin/penguin_action.gif";
         this.sleepFreezeTimer = setTimeout(() =>
         {
@@ -39,7 +41,12 @@ class Penguin extends Mole
         this.isAsleep = false;
         this.lingerTime = 0.0;
         clearTimeout(this.sleepFreezeTimer);
-        this.playAnimation("wake");
+
+        // the wake gif starts from fully nodded off (2.55s into the sleep gif), so before that he just snaps awake
+        if (Date.now() - this.sleepStartTime >= 2550)
+            this.playAnimation("wake");
+        else
+            this.playSprite("idle");
         setDarkness(gameRootElement, 0);
         targetElement.style.visibility = "visible";
     }
