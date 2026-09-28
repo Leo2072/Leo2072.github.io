@@ -162,16 +162,38 @@ for (let hole of holes)
 pickTarget();
 
 
-setInterval(() =>
+// stop everything on game over: mole movement, dog sneezes, raccoon swaps, penguin sleep and any playing gifs
+function endGame()
 {
-    if (timeLeft > 0)
+    stopPerFrameProcessLoop();
+
+    for (let hole of holes)
     {
-        timeLeft -= 0.1;
-        timerElement.textContent = "Time: " + Math.ceil(timeLeft);
+        if (hole.isFurred)
+            hole.visualElement.src = "Sprites/Dog/dog_fur_pile.png";
+
+        var mole = hole.mole;
+        if (mole == null) continue;
+
+        clearTimeout(mole.resetTimer);
+        mole.onDespawn();
+        mole.playSprite("idle");
     }
-    else
+
+    timerElement.textContent = "Time: 0";
+    document.getElementById("target-label").textContent = "Game over!";
+    targetIconElement.style.display = "none";
+}
+
+var gameTimer = setInterval(() =>
+{
+    timeLeft -= 0.1;
+    timerElement.textContent = "Time: " + Math.ceil(timeLeft);
+
+    if (timeLeft <= 0)
     {
-        document.getElementById("target-label").textContent = "Game over!";
-        targetIconElement.style.display = "none";
+        timeLeft = 0;
+        clearInterval(gameTimer);
+        endGame();
     }
 }, 100);
