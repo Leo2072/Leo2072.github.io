@@ -162,7 +162,6 @@ class Mole extends ProcessTreeNode
     // Callback to receive being clicked on.
     onClick()
     {
-        console.log(this);
         if (this.isHittable())
         {
             if (this.isHidden)

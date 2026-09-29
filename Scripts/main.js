@@ -29,11 +29,24 @@ var TURN_TRANSITION_NONE = 0; // No turn transitions are happening.
 var TURN_TRANSITION_END = 1; // The moles are returning into their holes.
 var TURN_TRANSITION_START = 2; // The moles are moving out of their holes.
 
-var MAX_TURN_TIME = 5;
-var MIN_TURN_TIME = 1;
-var TURN_TIME_DECAY_FACTOR = 1.25;
+var MAX_TURN_TIME = 10;
+var MIN_TURN_TIME = 2;
+var TURN_TIME_DECAY_FACTOR = 1.1;
 
 var UNKNOWN_TARGET_SPRITE_SRC = "Sprites/unknown_title_icon.png";
+
+
+var REWARD_TIERS = [
+    { minScore: 0, imgSrc: "Sprites/Rewards/DogSneeze.gif" },
+    { minScore: 500, imgSrc: "Sprites/Rewards/DogSqueak.gif" },
+    { minScore: 1000, imgSrc: "Sprites/Rewards/RaccoonStop.gif" },
+    { minScore: 1500, imgSrc: "Sprites/Rewards/PenguinAggressive.gif" },
+    { minScore: 2000, imgSrc: "Sprites/Rewards/RaccoonSqueak.gif" },
+    { minScore: 2500, imgSrc: "Sprites/Rewards/PenguinSleep.gif" },
+    { minScore: 3000, imgSrc: "Sprites/Rewards/DogStartled.gif" },
+    { minScore: 3500, imgSrc: "Sprites/Rewards/RaccoonMove.gif" },
+    { minScore: 4000, imgSrc: "Sprites/Rewards/FurPile.gif" },
+];
 
 
 /* Set up game. */
@@ -47,6 +60,9 @@ class GameController extends ProcessTreeNode
         this.scoreElement = document.getElementById("score-display");
         this.targetElement = document.getElementById("target-display");
         this.timerElement = document.getElementById("timer-display");
+
+        this.rewardScreenElement = document.getElementById("reward-screen");
+        this.rewardImageElement = document.getElementById("reward-image");
 
         this.gameSlots = [];
         for (var slot of document.getElementsByClassName("animal-button"))
@@ -165,7 +181,21 @@ class GameController extends ProcessTreeNode
 
                             // Display game over.
                             {
-                                console.log("Game Over");
+                                // Get reward GIF.
+                                var rewardImageSrc = "";
+                                for (var reward of REWARD_TIERS)
+                                {
+                                    if (reward.minScore <= this.score)
+                                    {
+                                        rewardImageSrc = reward.imgSrc;
+                                    }
+                                    else break;
+                                }
+                                // Display reward screen.
+                                this.rewardImageElement.src = rewardImageSrc;
+                                this.rewardScreenElement.style.visibility = "visible";
+                                this.rewardScreenElement.style.animationName = "showRewards";
+                                this.rewardScreenElement.style.animationDuration = "4s";
                             }
                         }
                         else

@@ -160,6 +160,8 @@
         justify-content: space-between;
         align-items: start;
         
+        filter: var(--game-darkness-filter);
+
         /* Placeholder background. */
         background-color: aquamarine;
     }
@@ -419,4 +421,58 @@ body
     }
 
     filter: var(--game-darkness-filter);
+}
+
+
+
+
+@keyframes showRewards
+{
+    from
+    {
+        transform: translate(0px, -100vh);
+    }
+
+    to
+    {
+        transform: translate(0px, 0px);
+    }
+}
+
+
+#reward-screen
+{
+    visibility: hidden;
+
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    top: 10vh;
+    right: 10vw;
+    bottom: 10vh;
+    left: 10vw;
+    padding: 1vh 1vw 1vh 1vw;
+    background-color: goldenrod;
+    align-items: center;
+    justify-items: start;
+}
+
+#reward-title
+{
+    font-size: 5vw;
+}
+
+#reward-image
+{
+    @media (orientation: landscape) and (min-width: 800px)
+    {
+        height: 40vh;
+        aspect-ratio: 1;
+    }
+
+    @media (orientation: portrait), not (min-width: 800px)
+    {
+        width: 50vw;
+        aspect-ratio: 1;
+    }
 }
