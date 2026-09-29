@@ -35,13 +35,14 @@ function playSound(sound)
 }
 
 // briefly show a floating -5s indicator and flash the timer red when the player is penalized
-function showPenalty(timerElement)
+function showPenalty(timerElement, percentagePenalty)
 {
     playSound(penaltySound);
 
     var el = document.createElement("div");
     el.className = "penalty-text";
-    el.textContent = "-5s";
+
+    el.textContent = "-" + Math.floor(percentagePenalty * 100) + "%";
     document.body.appendChild(el);
 
     timerElement.classList.add("timer-penalty");
@@ -87,10 +88,11 @@ class GameController extends ProcessTreeNode
 
         this.rootElement = document.getElementById("game-bound");
         this.scoreElement = document.getElementById("score-display");
-        this.targetElement = document.getElementById("target-display");
+        this.targetElement = document.getElementById("target-icon");
         this.timerElement = document.getElementById("timer-display");
 
         this.rewardScreenElement = document.getElementById("reward-screen");
+        this.rewardTitleElement = document.getElementById("reward-title");
         this.rewardImageElement = document.getElementById("reward-image");
 
         this.gameSlots = [];
@@ -176,6 +178,7 @@ class GameController extends ProcessTreeNode
     nextTurn()
     {
         // Update score.
+        playSound(correctSound);
         this.score += this.getTurnScore();
         this.scoreElement.textContent = "Score: " + Math.floor(this.score);
 
@@ -187,6 +190,13 @@ class GameController extends ProcessTreeNode
 
         this.timer = 0;
         this.turnTransition = TURN_TRANSITION_END;
+    }
+
+
+    penalize(percentagePenalty)
+    {
+        this.timer += this.getActualDuration(percentagePenalty);
+        showPenalty(this.timerElement, percentagePenalty);
     }
 
 
@@ -220,6 +230,7 @@ class GameController extends ProcessTreeNode
                                     else break;
                                 }
                                 // Display reward screen.
+                                this.rewardTitleElement.textContent = "You scored: " + Math.floor(this.score) + " Points!";
                                 this.rewardImageElement.src = rewardImageSrc;
                                 this.rewardScreenElement.style.visibility = "visible";
                                 this.rewardScreenElement.style.animationName = "showRewards";

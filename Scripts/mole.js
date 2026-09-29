@@ -173,7 +173,7 @@ class Mole extends ProcessTreeNode
                 this.state = MOLE_STATE_ANGRY;
                 this.timer = 0;
                 this.updateSprite();
-                this.gameController.timer += this.gameController.turnDuration * this.pressPenalty;
+                this.gameController.penalize(this.pressPenalty);
             }
             else
             {

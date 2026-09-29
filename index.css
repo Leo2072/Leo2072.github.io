@@ -156,8 +156,8 @@
         height: 25%;
 
         flex-direction: row;
-        justify-content: space-between;
-        align-items: start;
+        justify-content: space-around;
+        align-items: center;
         
         filter: var(--game-darkness-filter);
 
@@ -258,8 +258,8 @@
         height: 100%;
 
         flex-direction: column;
-        justify-content: space-between;
-        align-items: start;
+        justify-content: space-around;
+        align-items: center;
         
         filter: var(--game-darkness-filter);
         
@@ -434,8 +434,19 @@ body
 .penalty-text
 {
     position: fixed;
-    top: 10vh;
-    left: 50vw;
+
+    @media (orientation: landscape) and (min-width: 800px)
+    {
+        top: 10vh;
+        left: 50vw;
+    }
+
+    @media (orientation: portrait), not (min-width: 800px)
+    {
+        top: 50vh;
+        left: 10vw;
+    }
+
     color: red;
     font-size: clamp(1.5em, 4vw, 6em);
     font-weight: bold;
@@ -479,6 +490,7 @@ body
 #reward-screen
 {
     visibility: hidden;
+    border: min(0.5vh, 0.5vw) solid darkgoldenrod;
 
     position: fixed;
     display: flex;
@@ -487,7 +499,7 @@ body
     right: 10vw;
     bottom: 10vh;
     left: 10vw;
-    padding: 1vh 1vw 1vh 1vw;
+    padding: min(1vh, 1vw);
     background-color: goldenrod;
     align-items: center;
     justify-items: start;
@@ -503,12 +515,10 @@ body
     @media (orientation: landscape) and (min-width: 800px)
     {
         height: 40vh;
-        aspect-ratio: 1;
     }
 
     @media (orientation: portrait), not (min-width: 800px)
     {
         width: 50vw;
-        aspect-ratio: 1;
     }
 }

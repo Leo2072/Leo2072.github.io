@@ -118,7 +118,7 @@ class Dog extends Mole
                     this.timer = 0;
                     this.updateSprite();
                 }
-                this.gameController.timer += this.gameController.turnDuration * this.pressPenalty;
+                this.gameController.penalize(this.pressPenalty);
             }
             else
             {
