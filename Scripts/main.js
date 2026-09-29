@@ -34,13 +34,27 @@ function playSound(sound)
     sound.play();
 }
 
-// briefly show a floating -5s indicator and flash the timer red when the player is penalized
+
+var pointerClientX = 0;
+var pointerClientY = 0;
+document.addEventListener('pointerdown', (event) =>
+{
+    console.log(event.clientX);
+    pointerClientX = event.clientX;
+    pointerClientY = event.clientY;
+});
+
+
+// briefly show a floating indicator and flash the timer red when the player is penalized
 function showPenalty(timerElement, percentagePenalty)
 {
     playSound(penaltySound);
 
     var el = document.createElement("div");
     el.className = "penalty-text";
+
+    el.style.left = pointerClientX + "px";
+    el.style.top = pointerClientY + "px";
 
     el.textContent = "-" + Math.floor(percentagePenalty * 100) + "%";
     document.body.appendChild(el);
