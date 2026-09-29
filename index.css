@@ -379,12 +379,29 @@ body
 
     #timer-display
     {
-        font-size: min(4vw, var(--game-bound-max-width) * 0.04);
-        font-weight: bold;
+        position: relative;
+        width: min(33vw, var(--game-bound-max-width) * 0.33);
+        aspect-ratio: calc(var(--game-bound-aspect-ratio) * 3);
         filter: var(--game-darkness-filter);
-        background-color: green;
-        --norm-fill: 0.0;
+        background-color: silver;
+        /* This must be explicitly set on the html file for certain display bar animation. */
+        --norm-fill: 1.0;
     }
+    #timer-fill
+    {
+        position: absolute;
+        top: calc(var(--game-bound-aspect-ratio) * 3 * 1%);
+        bottom: calc(var(--game-bound-aspect-ratio) * 3 * 1%);
+        left: 1%;
+        width: calc(var(--norm-fill) * 98%);
+        /* Linearly interpolate from rgb(12, 249, 0) at norm-fill=1 to rgb(229, 103, 91) at norm-fill=0. */
+        background-color: rgb(
+            calc(229 + (12 - 229) * var(--norm-fill)),
+            calc(103 + (249 - 103) * var(--norm-fill)),
+            calc(91 + (0 - 91) * var(--norm-fill))
+        );
+    }
+
 
     #target-display
     {
@@ -417,11 +434,32 @@ body
     #timer-display
     {
         font-size: min(6vw, var(--game-bound-max-width) * 0.06);
-        font-weight: bold;
+
+        position: relative;
+        width: min(20vw, var(--game-bound-max-width) * 0.20);
+        aspect-ratio: calc(var(--game-bound-aspect-ratio));
         filter: var(--game-darkness-filter);
-        background-color: green;
-        --norm-fill: 0.0;
+        background-color: silver;
+        /* This must be explicitly set on the html file for certain display bar animation. */
+        --norm-fill: 1.0;
     }
+
+    #timer-fill
+    {
+        position: absolute;
+        bottom: 2%;
+        left: calc(2% / (var(--game-bound-aspect-ratio)));
+        right: calc(2% / (var(--game-bound-aspect-ratio))); 
+        height: calc(var(--norm-fill) * 96%);
+
+        /* Linearly interpolate from rgb(12, 249, 0) at norm-fill=1 to rgb(229, 103, 91) at norm-fill=0. */
+        background-color: rgb(
+            calc(229 + (12 - 229) * var(--norm-fill)),
+            calc(103 + (249 - 103) * var(--norm-fill)),
+            calc(91 + (0 - 91) * var(--norm-fill))
+        );
+    }
+
 
     #target-display
     {
