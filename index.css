@@ -259,3 +259,29 @@ body
     0%   { opacity: 1; transform: translateX(-50%) translateY(0); }
     100% { opacity: 0; transform: translateX(-50%) translateY(-0.7em); }
 }
+
+/* final score popup in the middle of the game on game over, same width and colour as the top bar */
+.final-score
+{
+    position: fixed;
+    top: calc(var(--game-width) * 0.225);
+    left: 50vw;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+    width: calc(var(--game-width) * 0.9);
+    padding: 0.4em 0;
+    text-align: center;
+    background-color: aquamarine;
+    border: 0.1em solid black;
+    font-size: calc(var(--game-width) * 0.05);
+    font-weight: bold;
+    white-space: nowrap;
+    z-index: 20;
+    animation: final-score-pop 0.3s ease-out;
+}
+
+@keyframes final-score-pop
+{
+    0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}

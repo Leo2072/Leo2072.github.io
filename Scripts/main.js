@@ -140,15 +140,9 @@ function resetAllMoles()
 
 for (let hole of holes)
 {
-    hole.slotElement.addEventListener("mouseenter", () =>
-    {
-        if (timeLeft <= 0 || hole.mole == null) return;
-        hole.mole.onHover();
-    });
-
     hole.slotElement.addEventListener("click", () =>
     {
-        if (timeLeft <= 0 || hole.mole == null || hole.mole.state == MOLE_STATE_DESPAWNING) return;
+        if (timeLeft <= 0 || hole.mole == null || hole.mole.state == MOLE_STATE_DESPAWNING || hole.mole.isMoving) return;
         if (hole.isFurred) return;
 
         // sleeping penguin wakes on any click with no penalty
@@ -200,6 +194,12 @@ function endGame()
 
     targetLabelElement.textContent = "Game over!";
     targetIconElement.style.display = "none";
+
+    // pop up the final score in the middle of the game
+    var popup = document.createElement("div");
+    popup.className = "final-score";
+    popup.textContent = "Final score: " + score;
+    document.body.appendChild(popup);
 }
 
 var gameTimer = setInterval(() =>

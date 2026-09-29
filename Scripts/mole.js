@@ -35,6 +35,7 @@ class Mole extends ProcessTreeNode
         this.onExit = null;                 // optional callback(hole), fired once this mole finishes despawning.
 
         this.isBusy = false;                // disable hits while busy
+        this.isMoving = false;              // true while the raccoon is swapping this mole, can't be clicked
 
         this.currentSpriteState = "idle";   // store this for redraw after hole change
         this.resetTimer = null;
@@ -121,7 +122,6 @@ class Mole extends ProcessTreeNode
     onMiss() {
         this.playAnimation("incorrect");
     }
-    onHover() {}
     onLinger(lingerTime) {}
 
     playSprite(state)
