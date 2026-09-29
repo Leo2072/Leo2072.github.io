@@ -15,6 +15,9 @@ class Penguin extends Mole
 
     onLinger(lingerTime)
     {
+        // TEMP for recording the video: add ?nosleep to the page address to keep the penguin awake (remove before merging to master)
+        if (location.search.includes("nosleep")) return;
+
         // only doze off while idle, so animations like the incorrect gif get to finish first
         if (!this.isAsleep && lingerTime >= 2.0 && this.currentSpriteState == "idle")
         {

@@ -8,6 +8,8 @@ class Dog extends Mole
 
     onSpawn()
     {
+        // TEMP for recording the video: add ?nodog to the page address to stop the sneezing (remove before merging to master)
+        if (location.search.includes("nodog")) return;
         this.scheduleFur();
     }
 
