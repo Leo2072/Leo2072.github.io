@@ -20,7 +20,7 @@ class Dog extends Mole
             clearTimeout(this.resetTimer); // so a leftover animation doesn't cut the sneeze short
             this.hole.visualElement.src = "Sprites/Dog/dog_action.gif";
             this.furTimer = setTimeout(() => this.spreadFur(), GIF_DURATIONS_MS.dog_action * 0.6625);
-        }, 1500 + Math.random() * 1500);
+        }, 3000 + Math.random() * 2500);
     }
 
     // cover the other occupied holes with fur

@@ -16,7 +16,7 @@ class Penguin extends Mole
     onLinger(lingerTime)
     {
         // only doze off while idle, so animations like the incorrect gif get to finish first
-        if (!this.isAsleep && lingerTime >= 1.5 && this.currentSpriteState == "idle")
+        if (!this.isAsleep && lingerTime >= 2.0 && this.currentSpriteState == "idle")
         {
             this.sleep();
         }
