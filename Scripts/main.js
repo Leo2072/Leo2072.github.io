@@ -35,6 +35,8 @@ function playSound(sound)
 }
 
 
+
+// Keep track of where the player last tapped the screen.
 var pointerClientX = 0;
 var pointerClientY = 0;
 document.addEventListener('pointerdown', (event) =>
@@ -43,7 +45,6 @@ document.addEventListener('pointerdown', (event) =>
     pointerClientX = event.clientX;
     pointerClientY = event.clientY;
 });
-
 
 // briefly show a floating indicator and flash the timer red when the player is penalized
 function showPenalty(timerElement, percentagePenalty)
@@ -59,8 +60,12 @@ function showPenalty(timerElement, percentagePenalty)
     el.textContent = "-" + Math.floor(percentagePenalty * 100) + "%";
     document.body.appendChild(el);
 
+    // Replay penalty animation for the timerElement by
+    // removing and reattaching the timer-penalty class, which plays the animation once..
+    timerElement.classList.remove("timer-penalty");
+    timerElement.offsetHeight;
     timerElement.classList.add("timer-penalty");
-    setTimeout(() => timerElement.classList.remove("timer-penalty"), 300);
+
     setTimeout(() => el.remove(), 1000);
 }
 
@@ -160,8 +165,7 @@ class GameController extends ProcessTreeNode
     // Set up the moles. Return true if successful.
     setUpMoles()
     {
-        var randomisedSlots = shuffleArray(this.gameSlots);
-        if (randomisedSlots.length != 3)
+        if (this.gameSlots.length != 3)
         {
             console.log("Project needs exactly 3 buttons, but has a different number");
             return false;
@@ -169,9 +173,9 @@ class GameController extends ProcessTreeNode
 
         // Assign each mole to a random slot.
         this.moles = [
-            new Dog(0, this, randomisedSlots[0]),
-            new Penguin(1, this, randomisedSlots[1]),
-            new Raccoon(2, this, randomisedSlots[2]),
+            new Penguin(0, this, this.gameSlots[0]),
+            new Raccoon(1, this, this.gameSlots[1]),
+            new Dog(2, this, this.gameSlots[2]),
         ];
         return true;
     }
@@ -183,7 +187,13 @@ class GameController extends ProcessTreeNode
         this.scoreElement.textContent = "Score: " + Math.floor(this.score);
         this.targetElement.src = UNKNOWN_TARGET_SPRITE_SRC;
 
+        for (var mole of this.moles)
+        {
+            mole.updateSprite();
+        }
+
         this.timer = 0;
+        this.turnDuration = this.getTurnTime();
         this.turnTransition = TURN_TRANSITION_END;
     }
 
@@ -334,7 +344,11 @@ class GameController extends ProcessTreeNode
                                 var targetMole = randomItemFromArray(this.moles);
                                 targetMole.isCorrect = true;
 
+                                // Chang the target and play a shake.
                                 this.targetElement.src = targetMole.getTargetSpriteSrc();
+                                this.targetElement.classList.remove("target-changed");
+                                this.targetElement.offsetHeight;
+                                this.targetElement.classList.add("target-changed");
 
                                 // Callback for the moles.
                                 for (var mole of this.moles)
@@ -365,11 +379,28 @@ class GameController extends ProcessTreeNode
 
 
 
-
-var gameController = new GameController();
-gameController.setUpMoles();
-processTreeRoot = gameController;
-
 // Start Game.
-gameController.startGame();
-window.addEventListener('load', startPerFrameProcessLoop);
+function beginGame()
+{
+    // Set up the game.
+    var gameController = new GameController();
+
+    // Try to set up the moles; exitting if fails.
+    if (!gameController.setUpMoles()) return;
+
+    gameController.startGame();
+    
+    // Set the gameController to be the root of the process tree (since it has no siblings).
+    processTreeRoot = gameController;
+
+    // Begin processing the process tree.
+    startPerFrameProcessLoop();
+}
+
+window.addEventListener('load', () =>
+{
+    for (var animalButton of document.getElementsByClassName("animal-button"))
+    {
+        animalButton.onclick = beginGame;
+    }
+});

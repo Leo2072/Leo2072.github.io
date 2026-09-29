@@ -320,7 +320,7 @@
     }
 }
 
-.animal-button, .fur-pile
+.animal-button
 {
     position: absolute;
     width: 100%;
@@ -358,9 +358,16 @@ body
 
 
 
-.timer-penalty
+
+
+@keyframes skew-y-shaking
 {
-    color: red;
+    0% { transform: skewY(-15deg); }
+    5% { transform: skewY(15deg); }
+    10% { transform: skewY(-15deg); }
+    15% { transform: skewY(15deg); }
+    20% { transform: skewY(0deg); }
+    100% { transform: skewY(0deg); }
 }
 
 
@@ -370,6 +377,9 @@ body
 {
     #score-display
     {
+        width: min(25vw, var(--game-bound-max-width) * 0.25);
+        overflow: clip;
+
         font-size: min(4vw, var(--game-bound-max-width) * 0.04);
         font-weight: bold;
         text-align: center;
@@ -386,6 +396,7 @@ body
         background-color: silver;
         /* This must be explicitly set on the html file for certain display bar animation. */
         --norm-fill: 1.0;
+        --damage-flash: 0.0;
     }
     #timer-fill
     {
@@ -394,13 +405,37 @@ body
         bottom: calc(var(--game-bound-aspect-ratio) * 3 * 1%);
         left: 1%;
         width: calc(var(--norm-fill) * 98%);
-        /* Linearly interpolate from rgb(12, 249, 0) at norm-fill=1 to rgb(229, 103, 91) at norm-fill=0. */
+        
+        /*
+            Linearly interpolate from rgb(12, 249, 0) at norm-fill=1 to rgb(229, 103, 91) at norm-fill=0.
+            Damage flash may increase this amount.
+        */
         background-color: rgb(
-            calc(229 + (12 - 229) * var(--norm-fill)),
-            calc(103 + (249 - 103) * var(--norm-fill)),
-            calc(91 + (0 - 91) * var(--norm-fill))
+            calc(229 + (12 - 229) * clamp(0, calc(var(--norm-fill) - var(--damage-flash)), 1)),
+            calc(103 + (249 - 103) * clamp(0, calc(var(--norm-fill) - var(--damage-flash)), 1)),
+            calc(91 + (0 - 91) * clamp(0, calc(var(--norm-fill) - var(--damage-flash)), 1))
         );
     }
+
+
+    .timer-penalty
+    {
+        animation: timer-penalty-shake 0.3s ease-out;
+        animation-iteration-count: 1;
+        animation-fill-mode: backwards;
+    }
+
+    /* Shake animations obtained from https://unused-css.com/blog/css-shake-animation/. */
+    @keyframes timer-penalty-shake
+    {
+        0% { transform: skewY(-15deg); --damage-flash: 0.0; }
+        5% { transform: skewY(15deg); --damage-flash: 0.25; }
+        10% { transform: skewY(-15deg); --damage-flash: 0.5; }
+        15% { transform: skewY(15deg); --damage-flash: 0.45; }
+        20% { transform: skewY(0deg); --damage-flash: 0.4; }
+        100% { transform: skewY(0deg); --damage-flash: 0.0; }
+    }
+
 
 
     #target-display
@@ -424,6 +459,9 @@ body
 {
     #score-display
     {
+        width: min(20vw, var(--game-bound-max-width) * 0.20);
+        overflow: clip;
+
         font-size: min(6vw, var(--game-bound-max-width) * 0.06);
         font-weight: bold;
         text-align: center;
@@ -442,6 +480,7 @@ body
         background-color: silver;
         /* This must be explicitly set on the html file for certain display bar animation. */
         --norm-fill: 1.0;
+        --damage-flash: 0.0;
     }
 
     #timer-fill
@@ -452,13 +491,34 @@ body
         right: calc(2% / (var(--game-bound-aspect-ratio))); 
         height: calc(var(--norm-fill) * 96%);
 
-        /* Linearly interpolate from rgb(12, 249, 0) at norm-fill=1 to rgb(229, 103, 91) at norm-fill=0. */
+        /*
+            Linearly interpolate from rgb(12, 249, 0) at norm-fill=1 to rgb(229, 103, 91) at norm-fill=0.
+            Damage flash may increase this amount.
+        */
         background-color: rgb(
-            calc(229 + (12 - 229) * var(--norm-fill)),
-            calc(103 + (249 - 103) * var(--norm-fill)),
-            calc(91 + (0 - 91) * var(--norm-fill))
+            calc(229 + (12 - 229) * clamp(0, calc(var(--norm-fill) - var(--damage-flash)), 1)),
+            calc(103 + (249 - 103) * clamp(0, calc(var(--norm-fill) - var(--damage-flash)), 1)),
+            calc(91 + (0 - 91) * clamp(0, calc(var(--norm-fill) - var(--damage-flash)), 1))
         );
     }
+
+    .timer-penalty
+    {
+        animation: timer-penalty-shake 0.3s ease-out;
+        animation-iteration-count: 1;
+    }
+
+    /* Shake animations obtained from https://unused-css.com/blog/css-shake-animation/. */
+    @keyframes timer-penalty-shake
+    {
+        0% { transform: skewX(-15deg); --damage-flash: 0.0; }
+        5% { transform: skewX(15deg); --damage-flash: 0.25; }
+        10% { transform: skewX(-15deg); --damage-flash: 0.5; }
+        15% { transform: skewX(15deg); --damage-flash: 0.45; }
+        20% { transform: skewX(0deg); --damage-flash: 0.4; }
+        100% { transform: skewX(0deg); --damage-flash: 0.0; }
+    }
+
 
 
     #target-display
@@ -484,6 +544,7 @@ body
 .target-changed
 {
     animation: target-pulse 0.3s ease-out;
+    animation-iteration-count: 1;
 }
 
 @keyframes target-pulse
