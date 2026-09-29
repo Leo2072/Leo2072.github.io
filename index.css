@@ -112,6 +112,9 @@
     justify-content: space-between;
     align-items: start;
 
+    /* darkens along with the animals when the penguin turns off the lights */
+    filter: var(--game-darkness-filter);
+
     /* Placeholder background. */
     background-color: aquamarine;
 }
