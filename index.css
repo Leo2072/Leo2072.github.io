@@ -145,8 +145,7 @@
         justify-content: space-evenly;
         align-items: center;
 
-        /* Placeholder background. */
-        background-color: cadetblue;
+        background-color: goldenrod;
     }
 
     /* The div showing which button must be pressed, the score, and the remaining amount of time. */
@@ -248,8 +247,7 @@
         justify-content: space-evenly;
         align-items: center;
         
-        /* Placeholder background. */
-        background-color: cadetblue;
+        background-color: goldenrod;
     }
 
     /* The div showing which button must be pressed, the score, and the remaining amount of time. */
@@ -322,7 +320,7 @@
     }
 }
 
-.animal-button
+.animal-button, .fur-pile
 {
     position: absolute;
     width: 100%;
@@ -339,12 +337,11 @@ body
     /* Prevent auto-scrolling */
     overscroll-behavior-y: none;
 
-    /* Placeholder background. */
-    background-color: #d3afd4;
+    background-color: rgba(255, 228, 91, 1);
     /* The leftmost background is rendered on top. */
     background-image: var(--game-background), url("Sprites/penguin_title_icon.png"); /* mwehehe */
     
-    background-repeat: no-repeat, repeat;
+    background-repeat: no-repeat, no-repeat;
 
     /* Position the background different depending on whether the game is in horizontal or vertical layout. */
     @media (orientation: landscape) and (min-width: 800px)
@@ -373,7 +370,8 @@ body
 #timer-display
 {
     padding: 10px;
-    --norm-fill: 0.0;
+    font-size: clamp(1.2em, 3vw, 4em);
+    font-weight: bold;
 
     @media (orientation: landscape) and (min-width: 800px)
     {
@@ -387,40 +385,78 @@ body
 
     filter: var(--game-darkness-filter);
 }
-#timer-display-fill
+
+.timer-penalty
 {
-    @media (orientation: landscape) and (min-width: 800px)
-    {
-        width: calc(var(--norm-fill) * 100%);
-        height: auto;
-    }
-
-    @media (orientation: portrait), not (min-width: 800px)
-    {
-        height: calc(var(--norm-fill) * 100%);
-        width: auto;
-    }
-
-    filter: var(--game-darkness-filter);
+    color: red;
 }
 
 #target-display
 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     padding: 10px;
+    font-size: clamp(1.5em, 4vw, 6em);
+    font-weight: bold;
+}
 
-    @media (orientation: landscape) and (min-width: 800px)
+#target-icon
+{
+    height: 1.5em;
+    width: 1.5em;
+    image-rendering: pixelated;
+}
+
+.target-changed
+{
+    animation: target-pulse 0.3s ease-out;
+}
+
+@keyframes target-pulse
+{
+    0%
     {
-        height: auto;
-        aspect-ratio: 1;
+        transform: scale(1);
     }
 
-    @media (orientation: portrait), not (min-width: 800px)
+    50%
     {
-        width: auto;
-        aspect-ratio: 1;
+        transform: scale(1.3);
     }
 
-    filter: var(--game-darkness-filter);
+    100%
+    {
+        transform: scale(1);
+    }
+}
+
+.penalty-text
+{
+    position: fixed;
+    top: 10vh;
+    left: 50vw;
+    color: red;
+    font-size: clamp(1.5em, 4vw, 6em);
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 10;
+    animation: penalty-float 1s ease-out forwards;
+}
+
+@keyframes penalty-float
+{
+    0%
+    {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    100%
+    {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-5vh);
+    }
 }
 
 

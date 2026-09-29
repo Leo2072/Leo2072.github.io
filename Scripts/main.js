@@ -24,6 +24,35 @@ function shuffleArray(arr)
 
 
 
+var penaltySound = new Audio("Sounds/incorrect.mp3");
+var correctSound = new Audio("Sounds/correct.mp3");
+
+// rewind first so the sound restarts even if it's still playing from the last click
+function playSound(sound)
+{
+    sound.currentTime = 0;
+    sound.play();
+}
+
+// briefly show a floating -5s indicator and flash the timer red when the player is penalized
+function showPenalty(timerElement)
+{
+    playSound(penaltySound);
+
+    var el = document.createElement("div");
+    el.className = "penalty-text";
+    el.textContent = "-5s";
+    document.body.appendChild(el);
+
+    timerElement.classList.add("timer-penalty");
+    setTimeout(() => timerElement.classList.remove("timer-penalty"), 300);
+    setTimeout(() => el.remove(), 1000);
+}
+
+
+
+
+
 // Different turn transition states.
 var TURN_TRANSITION_NONE = 0; // No turn transitions are happening.
 var TURN_TRANSITION_END = 1; // The moles are returning into their holes.
@@ -99,7 +128,6 @@ class GameController extends ProcessTreeNode
     {
         return MIN_TURN_TIME + (MAX_TURN_TIME - MIN_TURN_TIME) * Math.pow(TURN_TIME_DECAY_FACTOR, 1 - this.turn);
     }
-
 
     // Convert a duration relative to the turn duration into an actual time in seconds.
     getActualDuration(turnRelativeTime)
@@ -309,6 +337,8 @@ class GameController extends ProcessTreeNode
         }
     }
 }
+
+
 
 
 var gameController = new GameController();
