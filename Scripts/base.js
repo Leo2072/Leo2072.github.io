@@ -159,6 +159,7 @@ function tickPerFrameProcess()
     var perFrameProcessCurrentFrameTime = Date.now();
     var delta;
 
+    // Ignore overflow.
     if (perFrameProcessLastFrameTime < perFrameProcessCurrentFrameTime)
     {
         // Get elapsed time in milliseconds, then convert it to seconds.
@@ -190,8 +191,8 @@ function startPerFrameProcessLoop()
 {
     if (perFrameProcess == null)
     {
-        perFrameProcess = setInterval(tickPerFrameProcess, MIN_PER_FRAME_DELAY);
         perFrameProcessLastFrameTime = Date.now();
+        perFrameProcess = setInterval(tickPerFrameProcess, MIN_PER_FRAME_DELAY);
     }
 }
 

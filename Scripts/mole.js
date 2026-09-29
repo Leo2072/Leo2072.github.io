@@ -66,7 +66,6 @@ class Mole extends ProcessTreeNode
 
         this.gameController = gameController;
 
-        this.setHole(visualElement, false);
         // Set this mole's index (for selecting other moles).
         this.index = index;
 
@@ -97,6 +96,8 @@ class Mole extends ProcessTreeNode
         // Create an explicit lambda function of this mole's onClick() function, with the mole bind to it.
         // This must be done to bind a class method to an onclick signal of a button.
         this.clickCallback = () => { this.onClick(); };
+
+        this.setHole(visualElement, false);
     }
 
 
