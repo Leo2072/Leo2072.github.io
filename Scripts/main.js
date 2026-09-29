@@ -62,9 +62,21 @@ var animalIcons = {
     "dog":     "Sprites/dog_title_icon.png"
 };
 
+var penaltySound = new Audio("Sounds/incorrect.mp3");
+var correctSound = new Audio("Sounds/correct.mp3");
+
+// rewind first so the sound restarts even if it's still playing from the last click
+function playSound(sound)
+{
+    sound.currentTime = 0;
+    sound.play();
+}
+
 // briefly show a floating -5s indicator and flash the timer red when the player is penalized
 function showPenalty()
 {
+    playSound(penaltySound);
+
     var el = document.createElement("div");
     el.className = "penalty-text";
     el.textContent = "-5s";
@@ -154,6 +166,7 @@ for (let hole of holes)
             // Only increase score if the mole is in a despawning state
             if (hitMole.state == MOLE_STATE_DESPAWNING)
             {
+                playSound(correctSound);
                 score++;
                 scoreElement.textContent = "Score: " + score;
                 resetAllMoles();
